@@ -73,3 +73,7 @@ cursor: pointer;
 span.selectable:hover {
 background-color: #81A381;
 }
+span.hidden {
+visibility: hidden; 
+position: absolute;
+}
