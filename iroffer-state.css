@@ -59,3 +59,8 @@ font-family: Verdana,Arial,Tahoma;
 font-size: 14pt;
 color: #a0a0a0;
 }
+table.status {
+font-family: Verdana,Arial,Tahoma;
+font-size: 10pt;
+background-color: #eafaea;
+}
