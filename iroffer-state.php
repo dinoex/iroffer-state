@@ -6,7 +6,7 @@
 #
 # Updates on:
 #	http://anime.dinoex.net/xdcc/tools/
-# 
+#
 
 # IRC-Nick des Bots
 $nick = ereg_replace( "/[^/]*[.]php$", '', $_SERVER[ "PHP_SELF" ] );
@@ -27,20 +27,25 @@ $filenames = array(
 
 $cache_file = "size.data";
 
+$highlight_color = '#81A381';
+
 $strip_in_names = array (
 	"^ *- *",
 	"\002",
 	"\0030[,]0",
 	"\0030[,]5",
 	"\0030",
+	"\00312",
 	"\00314",
 	"\00315",
 	"\0033",
+	"\0034",
 	"\0035\037",
 	"\0037",
 	"\0032",
 	"\00310",
 	"\003",
+	"\017",
 );
 
 ?>
@@ -60,7 +65,7 @@ background-color: #81A381;
 color: #ffffff;
 font-family: Verdana,Arial,Tahoma,sans-serif;
 font-size: 9pt;
-font-weight: bold; 
+font-weight: bold;
 text-align: left;
 }
 th.head {
@@ -68,7 +73,7 @@ background-color: #81A381;
 color: #ffffff;
 font-family: Verdana,Arial,Tahoma,sans-serif;
 font-size: 9pt;
-font-weight: bold; 
+font-weight: bold;
 text-align: left;
 padding-left: 5px;
 padding-right: 5px;
@@ -92,7 +97,7 @@ border-bottom: 1px solid #cccccc;
 text-align: left;
 padding-left: 5px;
 padding-right: 5px;
-} 
+}
 td.right {
 background-color: #eafaea;
 color: #252525;
@@ -113,6 +118,23 @@ color: #a0a0a0;
 <meta http-equiv="content-language" content="de-de">
 <link rel="icon" href="/favicon.ico">
 <title><?php echo $nick; ?></title>
+<script language=javascript type=text/javascript>
+function highlight(which,color){
+if (document.all||document.getElementById)
+    which.style.backgroundColor=color
+}
+function selectThis(src) {
+    document.selection.clear;
+    txt = eval(src +".innerText");
+    theObj = document.all(txt);
+    txtRange = document.body.createTextRange();
+    txtRange.moveToElementText(eval(src));
+    txtRange.select();
+    txtRange.execCommand("RemoveFormat");
+    txtRange.execCommand("Copy");
+    alert(txt + " wurde in die Zwischenablage kopiert");
+}
+</script>
 </head>
 <body>
 <center>
@@ -313,6 +335,7 @@ function get_text( $string ) {
 
 read_sizecache( $cache_file );
 
+$nick2 = ereg_replace( "[^A-Za-z_0-9]", '', $nick );
 $packs = 0;
 $total[ 'packs' ] = 0;
 $total[ 'size' ] = 0;
@@ -448,28 +471,6 @@ foreach ( $filenames as $key => $filename) {
 					$j += 4 - $r;
 			}
 
-#00000090  00 00 0c 01 00 00 00 4e  2f 64 61 74 61 2f 61 6e  |.......N/data/an|
-#000000a0  69 6d 65 2f 64 65 2f 47  72 65 65 6e 5f 47 72 65  |ime/de/Green_Gre|
-#000000b0  65 6e 2f 5b 41 50 5d 5f  47 72 65 65 6e 5f 47 72  |en/[AP]_Green_Gr|
-#000000c0  65 65 6e 5f 4f 56 41 5f  5b 58 56 49 44 5d 5f 5b  |een_OVA_[XVID]_[|
-#000000d0  61 34 33 30 37 38 61 36  5d 2e 61 76 69 00 00 00  |a43078a6].avi...|
-#000000e0  00 00 0c 02 00 00 00 33  5b 41 50 5d 5f 47 72 65  |.......3[AP]_Gre|
-#000000f0  65 6e 5f 47 72 65 65 6e  5f 4f 56 41 5f 5b 58 56  |en_Green_OVA_[XV|
-#00000100  49 44 5d 5f 5b 61 34 33  30 37 38 61 36 5d 2e 61  |ID]_[a43078a6].a|
-#00000110  76 69 00 00 00 00 0c 03  00 00 00 09 00 00 00 00  |vi..............|
-#
-#00000090  00 00 0c 01 00 00 00 3b  2f 64 61 74 61 2f 6f 66  |.......;/data/of|
-#000000a0  66 65 72 2f 64 65 2f 5b  4c 2d 46 5d 42 6f 74 74  |fer/de/[L-F]Bott|
-#000000b0  6c 65 5f 46 61 69 72 79  5f 30 31 5f 5b 43 37 44  |le_Fairy_01_[C7D|
-#000000c0  37 41 38 46 45 5d 2e 61  76 69 00 00 00 00 0c 02  |7A8FE].avi......|
-#000000d0  00 00 00 2c 5b 4c 2d 46  5d 42 6f 74 74 6c 65 5f  |...,[L-F]Bottle_|
-#000000e0  46 61 69 72 79 5f 30 31  5f 5b 43 37 44 37 41 38  |Fairy_01_[C7D7A8|
-#000000f0  46 45 5d 2e 61 76 69 00  00 00 0c 03 00 00 00 09  |FE].avi.........|
-#00000100  00 00 00 00 00 00 0c 04  00 00 00 0c 00 00 00 11  |................|
-#00000110  00 00 0c 05 00 00 00 0c  00 00 00 00 00 00 0c 06  |................|
-
-			
-
 			break;
 		default:
 			printf( ":tag=%d<br>", $tag );
@@ -542,12 +543,23 @@ if ( isset( $_GET[ 'group' ] ) ) {
 		&& ( $info[ $key ][ 'xx_data' ] != $_GET[ 'group' ] ) )
 			continue;
 
+		$tpack = $info[ $key ][ 'pack' ];
+		$tname = $info[ $key ][ 'xx_desc' ];
+		$jsid= $nick2.'_'.$tpack;
+
+		$tname = '<span width="100%" onmouseover="highlight(this,\''.
+			$highlight_color.'\')" style="CURSOR: pointer" onclick=\'selectThis("'.
+			$jsid.'");\' onmouseout="highlight(this,\'\')" href="">'.
+			$tname."</span>\n".
+			'<span id="'.$jsid.'" style="VISIBILITY: hidden; POSITION: absolute">'.
+			'/msg '.$nick.' xdcc send #'.$tpack."</span>\n";
+
 		echo '
 <tr>
-<td class="right">#'.$info[ $key ][ 'pack' ].'</td>
+<td class="right">#'.$tpack.'</td>
 <td class="right">'.$info[ $key ][ 'xx_gets' ].'</td>
 <td class="right">'.makesize($info[ $key ][ 'size' ]).'</td>
-<td class="content">'.$info[ $key ][ 'xx_desc' ].'</td>
+<td class="content">'.$tname.'</td>
 </tr>
 ';
 	}
@@ -685,7 +697,7 @@ if ( isset( $_GET[ 'group' ] ) ) {
 	}
 
 }
-	
+
 ?>
 
 </tbody>
