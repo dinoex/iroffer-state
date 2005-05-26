@@ -6,7 +6,10 @@ font-family: Arial;
 font-size:  small;
 text-align: center;
 }
-a.head {
+a{color: #0000FF; text-decoration: underline;}
+a:link {color: #0000FF; text-decoration: underline;}
+a:visited {color: #000080; text-decoration: underline;}
+a.head,a.head:visited {
 background-color: #81A381;
 color: #ffffff;
 font-family: Verdana,Arial,Tahoma,sans-serif;
@@ -63,4 +66,10 @@ table.status {
 font-family: Verdana,Arial,Tahoma;
 font-size: 10pt;
 background-color: #eafaea;
+}
+span.selectable {
+cursor: pointer;
+}
+span.selectable:hover {
+background-color: #81A381;
 }
