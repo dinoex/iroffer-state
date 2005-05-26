@@ -16,7 +16,6 @@ $nick = ereg_replace( '^/(.*/)*', '', $nick );
 
 # Statusfiles der bots
 $filenames = array(
-	'tb.state',
 	'mybot.state',
 );
 
@@ -24,7 +23,6 @@ $cache_file = 'size.data';
 $default_group = '.neu';
 
 $javascript = 1;
-$highlight_color = '#81A381';
 
 $strip_in_names = array (
 	'^ *- *',
@@ -58,10 +56,6 @@ if ( $javascript > 0 ) {
 	echo '
 <script language=javascript type=text/javascript>
 <!--
-function highlight(which,color){
-if (document.all||document.getElementById)
-    which.style.backgroundColor=color
-}
 function selectThis(src) {
     document.selection.clear;
     txt = eval(src +".innerText");
@@ -127,7 +121,7 @@ function clean_names( $text2 ) {
 	foreach ( $strip_in_names as $skey => $sdata) {
 		$text2 = ereg_replace( $sdata, '', $text2 );
 	}
-	return ereg_replace( '[&]', '&amp;', $text2 );
+	return $text2;
 }
 
 function read_sizecache( $filename ) {
@@ -177,6 +171,12 @@ function filesize_cache( $filename ) {
 	return $tsize;
 }
 
+function cgi_escape( $string ) {
+	$string = ereg_replace( '[&]', '%26', $string );
+	$string = ereg_replace( '[+]', '%2B', $string );
+	return $string;
+}
+
 function make_self_more() {
 	$par = 0;
 	$link = $_SERVER[ 'PHP_SELF' ];
@@ -185,15 +185,15 @@ function make_self_more() {
 		if ( $par == 0 )
 			$link .= '?';
 		else
-			$link .= '&';
-		$link .= 'group='.$_GET[ 'group' ];
+			$link .= '&amp;';
+		$link .= 'group='.cgi_escape($_GET[ 'group' ]);
 		$par ++;
 	}
 	if ( !isset( $_GET[ 'volumen' ] ) ) {
 		if ( $par == 0 )
 			$link .= '?';
 		else
-			$link .= '&';
+			$link .= '&amp;';
 		$link .= 'volumen=1';
 		$par ++;
 	}
@@ -201,7 +201,7 @@ function make_self_more() {
 		if ( $par == 0 )
 			$link .= '?';
 		else
-			$link .= '&';
+			$link .= '&amp;';
 		$link .= 'order='.$_GET[ 'order' ];
 		$par ++;
 	}
@@ -216,15 +216,15 @@ function make_self_order( $order ) {
 		if ( $par == 0 )
 			$link .= '?';
 		else
-			$link .= '&';
-		$link .= 'group='.$_GET[ 'group' ];
+			$link .= '&amp;';
+		$link .= 'group='.cgi_escape($_GET[ 'group' ]);
 		$par ++;
 	}
 	if ( isset( $_GET[ 'volumen' ] ) ) {
 		if ( $par == 0 )
 			$link .= '?';
 		else
-			$link .= '&';
+			$link .= '&amp;';
 		$link .= 'volumen='.$_GET[ 'volumen' ];
 		$par ++;
 	}
@@ -232,7 +232,7 @@ function make_self_order( $order ) {
 		if ( $par == 0 )
 			$link .= '?';
 		else
-			$link .= '&';
+			$link .= '&amp;';
 		$link .= 'order='.$order;
 		$par ++;
 	}
@@ -247,15 +247,15 @@ function make_self_group( $group ) {
 		if ( $par == 0 )
 			$link .= '?';
 		else
-			$link .= '&';
-		$link .= 'group='.$group;
+			$link .= '&amp;';
+		$link .= 'group='.cgi_escape($group);
 		$par ++;
 	}
 	if ( isset( $_GET[ 'volumen' ] ) ) {
 		if ( $par == 0 )
 			$link .= '?';
 		else
-			$link .= '&';
+			$link .= '&amp;';
 		$link .= 'volumen='.$_GET[ 'volumen' ];
 		$par ++;
 	}
@@ -263,7 +263,7 @@ function make_self_group( $group ) {
 		if ( $par == 0 )
 			$link .= '?';
 		else
-			$link .= '&';
+			$link .= '&amp;';
 		$link .= 'order='.$_GET[ 'order' ];
 		$par ++;
 	}
@@ -278,7 +278,7 @@ function make_self_back( $order ) {
 		if ( $par == 0 )
 			$link .= '?';
 		else
-			$link .= '&';
+			$link .= '&amp;';
 		$link .= 'volumen='.$_GET[ 'volumen' ];
 		$par ++;
 	}
@@ -286,7 +286,7 @@ function make_self_back( $order ) {
 		if ( $par == 0 )
 			$link .= '?';
 		else
-			$link .= '&';
+			$link .= '&amp;';
 		$link .= 'order='.$_GET[ 'order' ];
 		$par ++;
 	}
@@ -663,10 +663,10 @@ href="'.make_self_order( 'size' ).'">GRÖSSE</a>';
 
 		if ( isset( $info[ $key ][ 'xx_lock' ] ) )
 			$tname .= ' (gesperrt)';
+		$tname = htmlspecialchars( $tname);
 		if ( $javascript > 0 ) {
-			$tname = '<span onmouseover="highlight(this,\''.
-				$highlight_color.'\')" style="CURSOR: pointer" onclick=\'selectThis("'.
-				$jsid.'");\' onmouseout="highlight(this,\'\')" href="">'.
+			$tname = '<span class="selectable" onclick=\'selectThis("'.
+				$jsid.'");\'>'.
 				$tname."</span>\n".
 				'<span id="'.$jsid.'" style="VISIBILITY: hidden; POSITION: absolute">'.
 				'/msg '.$nick.' xdcc send #'.$tpack."</span>\n";
@@ -676,7 +676,7 @@ href="'.make_self_order( 'size' ).'">GRÖSSE</a>';
 
 		$label = "Download mit:\n/msg ".$nick.' xdcc send #'.$tpack."\n";
 		if ( isset( $info[ $key ][ 'xx_md5' ] ) )
-			$label .= "\nmd5: ".$info[ $key ][ 'xx_md5' ]."\n";
+			$label .= "\nmd5: ".$info[ $key ][ 'xx_md5' ];
 
 		echo '
 <tr>
@@ -812,7 +812,6 @@ href="'.make_self_order( '' ).'">GRUPPE</a>';
 			$getsperpack = sprintf( '%.1f', $gruppen[ $key ][ 'xx_gets' ] / $tpacks );
 			$rget3 = '<td class="right">'.$getsperpack.'</td>';
 		}
-
 		echo '
 <tr>
 <td class="right">'.$tpacks.'</td>
@@ -820,8 +819,8 @@ href="'.make_self_order( '' ).'">GRUPPE</a>';
 '.$rget3.'
 <td class="right">'.makesize($asize).'</td>
 '.$tvol3.'
-<td class="content">'.$key.'</td>
-<td class="content"><a title="Liste dieser Packs anzeigen" href="'.$link.'">'.$tname.'</a></td>
+<td class="content">'.htmlspecialchars($key).'</td>
+<td class="content"><a title="Liste dieser Packs anzeigen" href="'.$link.'">'.htmlspecialchars($tname).'</a></td>
 </tr>
 ';
 	}
