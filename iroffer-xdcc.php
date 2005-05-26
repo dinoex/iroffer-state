@@ -3,7 +3,7 @@
 #
 # Copyright 2004 Dirk Meyer, Im Grund 4, 34317 Habichstwald
 #	dirk.meyer@dinoex.sub.org
-# 
+#
 # Updates on:
 #	http://anime.dinoex.net/xdcc/tools/
 #
@@ -26,6 +26,8 @@ $filenames = array(
 );
 
 $cache_file = "size.data";
+
+$highlight_color = '#81A381';
 
 $strip_in_names = array (
 	"^ *- *",
@@ -63,7 +65,7 @@ background-color: #81A381;
 color: #ffffff;
 font-family: Verdana,Arial,Tahoma,sans-serif;
 font-size: 9pt;
-font-weight: bold; 
+font-weight: bold;
 text-align: left;
 }
 th.head {
@@ -71,7 +73,7 @@ background-color: #81A381;
 color: #ffffff;
 font-family: Verdana,Arial,Tahoma,sans-serif;
 font-size: 9pt;
-font-weight: bold; 
+font-weight: bold;
 text-align: left;
 padding-left: 5px;
 padding-right: 5px;
@@ -95,7 +97,7 @@ border-bottom: 1px solid #cccccc;
 text-align: left;
 padding-left: 5px;
 padding-right: 5px;
-} 
+}
 td.right {
 background-color: #eafaea;
 color: #252525;
@@ -116,6 +118,23 @@ color: #a0a0a0;
 <meta http-equiv="content-language" content="de-de">
 <link rel="icon" href="/favicon.ico">
 <title><?php echo $nick; ?></title>
+<script language=javascript type=text/javascript>
+function highlight(which,color){
+if (document.all||document.getElementById)
+    which.style.backgroundColor=color
+}
+function selectThis(src) {
+    document.selection.clear;
+    txt = eval(src +".innerText");
+    theObj = document.all(txt);
+    txtRange = document.body.createTextRange();
+    txtRange.moveToElementText(eval(src));
+    txtRange.select();
+    txtRange.execCommand("RemoveFormat");
+    txtRange.execCommand("Copy");
+    alert(txt + " wurde in die Zwischenablage kopiert");
+}
+</script>
 </head>
 <body>
 <center>
@@ -304,6 +323,7 @@ foreach ( $filenames as $key => $filename) {
 	}
 }
 
+$nick2 = ereg_replace( "[^A-Za-z_0-9]", '', $nick );
 $packs = 0;
 $total[ 'packs' ] = 0;
 $total[ 'size' ] = 0;
@@ -314,7 +334,7 @@ $gruppen[ '*' ][ 'packs' ] = 0;
 $gruppen[ '*' ][ 'size' ] = 0;
 $gruppen[ '*' ][ 'xx_gets' ] = 0;
 $gruppen[ '*' ][ 'trans' ] = 0;
- 
+
 $datalines = explode("\n", $read);
 foreach ( $datalines as $key => $data) {
 	if ( $data == "" )
@@ -383,10 +403,10 @@ foreach ( $datalines as $key => $data) {
 		}
 		continue;
 	}
-	
+
 	if ( $key != 'xx_data' )
 		continue;
-	
+
 	$gr = $text;
 	if ( !isset( $gruppen[ $gr ][ 'packs' ] ) ) {
 		$gruppen[ $gr ][ 'packs' ] = 0;
@@ -464,12 +484,23 @@ if ( isset( $_GET[ 'group' ] ) ) {
 		&& ( $info[ $key ][ 'xx_data' ] != $_GET[ 'group' ] ) )
 			continue;
 
+		$tpack = $info[ $key ][ 'pack' ];
+		$tname = $info[ $key ][ 'xx_desc' ];
+		$jsid= $nick2.'_'.$tpack;
+
+		$tname = '<span width="100%" onmouseover="highlight(this,\''.
+			$highlight_color.'\')" style="CURSOR: pointer" onclick=\'selectThis("'.
+			$jsid.'");\' onmouseout="highlight(this,\'\')" href="">'.
+			$tname."</span>\n".
+			'<span id="'.$jsid.'" style="VISIBILITY: hidden; POSITION: absolute">'.
+			'/msg '.$nick.' xdcc send #'.$tpack."</span>\n";
+
 		echo '
 <tr>
-<td class="right">#'.$info[ $key ][ 'pack' ].'</td>
+<td class="right">#'.$tpack.'</td>
 <td class="right">'.$info[ $key ][ 'xx_gets' ].'</td>
 <td class="right">'.makesize($info[ $key ][ 'size' ]).'</td>
-<td class="content">'.$info[ $key ][ 'xx_desc' ].'</td>
+<td class="content">'.$tname.'</td>
 </tr>
 ';
 	}
@@ -593,6 +624,15 @@ if ( isset( $_GET[ 'group' ] ) ) {
 			$rget3 = '<td class="right">'.$getsperpack.'</td>';
 		}
 
+		$jsid= $nick2.'_'.ereg_replace( "[^A-Za-z_0-9]", '', $key );
+
+		$tkey = '<span width="100%" onmouseover="highlight(this,\''.
+			$highlight_color.'\')" style="CURSOR: pointer" onclick=\'selectThis("'.
+			$jsid.'");\' onmouseout="highlight(this,\'\')" href="">'.
+			$key."</span>\n".
+			'<span id="'.$jsid.'" style="VISIBILITY: hidden; POSITION: absolute">'.
+			'/msg '.$nick.' xdcc list '.$key."</span>\n";
+
 		echo '
 <tr>
 <td class="right">'.$tpacks.'</td>
@@ -600,14 +640,14 @@ if ( isset( $_GET[ 'group' ] ) ) {
 '.$rget3.'
 <td class="right">'.makesize($asize).'</td>
 '.$tvol3.'
-<td class="content">'.$key.'</td>
+<td class="content">'.$tkey.'</td>
 <td class="content"><a href="'.$link.'">'.$tname.'</a></td>
 </tr>
 ';
 	}
 
 }
-	
+
 ?>
 
 </tbody>
