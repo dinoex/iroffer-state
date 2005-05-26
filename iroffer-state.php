@@ -47,7 +47,7 @@ $strip_in_names = array (
 ?>
 <html>
 <head>
-<meta name="generator" content="iroffer-state 1.1, iroffer.dinoex.net">
+<meta name="generator" content="iroffer-state 1.2, iroffer.dinoex.net">
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <meta http-equiv="content-language" content="de-de">
 <link rel="icon" href="/favicon.ico">
@@ -129,16 +129,12 @@ function clean_names( $text2 ) {
 function read_sizecache( $filename ) {
 	global $sizecache;
 	global $sizecache_dirty;
-	global $base_path;
 
 	$sizecache_dirty = 0;
-	$localfile = $filename;
-	if ( !ereg( '^/', $filename ) )
-		$localfile = $base_path.$filename;
 	$len = filesize($filename);
 	if ( $len <= 0 ) 
 		return;
-	$fp = fopen( $localfile, 'r' );
+	$fp = fopen( $filename, 'r' );
 	if ( $fp ) {
 		$tread = fread($fp, $len);
 		fclose($fp);
@@ -170,11 +166,15 @@ function write_sizecache( $filename ) {
 function filesize_cache( $filename ) {
 	global $sizecache;
 	global $sizecache_dirty;
+	global $base_path;
 
 	if ( isset( $sizecache[ $filename ] ) ) {
 		return $sizecache[ $filename ];
 	}
-	$tsize = filesize( $filename );
+	$localfile = $filename;
+	if ( !ereg( '^/', $filename ) )
+		$localfile = $base_path.$filename;
+	$tsize = filesize( $localfile );
 	$sizecache[ $filename ] = $tsize;
 	$sizecache_dirty ++;
 	return $tsize;
