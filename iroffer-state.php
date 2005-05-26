@@ -16,8 +16,8 @@ $nick = ereg_replace( '^/(.*/)*', '', $nick );
 
 # Statusfiles der bots
 $filenames = array(
+	'tb.state',
 	'mybot.state',
-	'afp.state',
 );
 
 $cache_file = 'size.data';
@@ -344,11 +344,11 @@ function read_removed( $statefile ) {
 
 function get_long( $string ) {
 	$l = ord( substr( $string, 0, 1 ) );
-	$l = $l << 8;
+	$l = $l * 256;
 	$l += ord( substr( $string, 1, 1 ) );
-	$l = $l << 8;
+	$l = $l * 256;
 	$l += ord( substr( $string, 2, 1 ) );
-	$l = $l << 8;
+	$l = $l * 256;
 	$l += ord( substr( $string, 3, 1 ) );
 	return $l;
 }
@@ -397,6 +397,9 @@ $total[ 'downl' ] = 0;
 $total[ 'xx_gets' ] = 0;
 $total[ 'trans' ] = 0;
 $total[ 'uptime' ] = 0;
+$total[ 'daily' ] = 0;
+$total[ 'weekly' ] = 0;
+$total[ 'monthly' ] = 0;
 $gruppen[ '*' ][ 'packs' ] = 0;
 $gruppen[ '*' ][ 'size' ] = 0;
 $gruppen[ '*' ][ 'xx_gets' ] = 0;
@@ -533,6 +536,21 @@ foreach ( $filenames as $key => $filename) {
 				if ( $r > 0 )
 					$j += 4 - $r;
 			}
+			break;
+		case 3328: # TLIMIT_DAILY_USED
+			$text = substr( $filedata, $i + 8, $len - 8 );
+			$traffic = get_xlong( $text );
+			$total[ 'daily' ] += $traffic;
+			break;
+		case 3330: # TLIMIT_WEEKLY_USED
+			$text = substr( $filedata, $i + 8, $len - 8 );
+			$traffic = get_xlong( $text );
+			$total[ 'weekly' ] += $traffic;
+			break;
+		case 3332: # TLIMIT_MONTHLY_USED
+			$text = substr( $filedata, $i + 8, $len - 8 );
+			$traffic = get_xlong( $text );
+			$total[ 'monthly' ] += $traffic;
 			break;
 		}
 		$i += $len;
@@ -814,23 +832,41 @@ href="'.make_self_order( '' ).'">GRUPPE</a>';
 
 </tbody>
 </table>
-<table>
+<table class="status">
 <tbody>
+<tr><td>Version</td>
 <?php
 
+$traffic = array (
+	'daily' => "Traffic heute",
+	'weekly' => "Traffic diese Woche",
+	'monthly' => "Traffic diesem Monat",
+);
+
+$label = '';
+foreach ( $traffic as $skey => $sdata) {
+	if ( !isset( $total[ $skey ] ) )
+		continue;
+	$label .= sprintf( "%6s %s\n", makesize($total[ $skey ]), $sdata );
+}
+echo '<td title="'.$label.'">'.$total[ 'version' ]."</td></tr>\n";
+
 $statistik = array (
-	'version' => 'Version',
+#	'version' => 'Version',
 #	'uptime' => 'Online',
 #	'time' => 'letztes Update',
 #	'xfr' => 'Tansfer Maximum',
 #	'send' => 'Send Maximum',
+#	'daily' => "Traffic heute",
+#	'weekly' => "Traffic diese Woche",
+#	'monthly' => "Traffic diesem Monat",
 );
 
 foreach ( $statistik as $skey => $sdata) {
 	if ( !isset( $total[ $skey ] ) )
 		continue;
 	echo '<tr><td>'.$sdata."</td>\n";
-	echo '<td>'.$total[ $skey ]."</td></tr>\n";
+	echo '<td'.$label.'>'.$total[ $skey ]."</td></tr>\n";
 }
 
 ?>
