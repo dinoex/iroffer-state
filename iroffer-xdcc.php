@@ -4,6 +4,9 @@
 # Copyright 2004 Dirk Meyer, Im Grund 4, 34317 Habichstwald
 #	dirk.meyer@dinoex.sub.org
 # 
+# Updates on:
+#	http://anime.dinoex.net/xdcc/tools/
+#
 
 # IRC-Nick des Bots
 $nick = ereg_replace( "/[^/]*[.]php$", '', $_SERVER[ "PHP_SELF" ] );
@@ -13,6 +16,9 @@ $nick = ereg_replace( "^/(.*/)*", '', $nick );
 
 # Laufern mehr als ein Bot mit den gleichen daten?
 $servers = 1;
+
+# force to show no group
+#$_GET[ 'group' ] = '*';
 
 # Statusfiles der bots
 $filenames = array(
@@ -27,12 +33,17 @@ $strip_in_names = array (
 	"\0030[,]0",
 	"\0030[,]5",
 	"\0030",
+	"\00312",
 	"\00314",
 	"\00315",
 	"\0033",
+	"\0034",
 	"\0035\037",
 	"\0037",
+	"\0032",
+	"\00310",
 	"\003",
+	"\017",
 );
 
 ?>
@@ -219,14 +230,78 @@ function filesize_cache( $filename ) {
 	return $tsize;
 }
 
+function make_self_more() {
+	$par = 0;
+	$link = $_SERVER[ "PHP_SELF" ];
+	# options:
+	if ( isset( $_GET[ 'group' ] ) ) {
+		if ( $par == 0 )
+			$link .= '?';
+		else
+			$link .= '&';
+		$link .= 'group='.$_GET[ 'group' ];
+		$par ++;
+	}
+	if ( !isset( $_GET[ 'volumen' ] ) ) {
+		if ( $par == 0 )
+			$link .= '?';
+		else
+			$link .= '&';
+		$link .= 'volumen=1';
+		$par ++;
+	}
+	if ( isset( $_GET[ 'order' ] ) ) {
+		if ( $par == 0 )
+			$link .= '?';
+		else
+			$link .= '&';
+		$link .= 'order='.$_GET[ 'order' ];
+		$par ++;
+	}
+	return $link;
+}
+
+function make_self_order( $order ) {
+	$par = 0;
+	$link = $_SERVER[ "PHP_SELF" ];
+	# options:
+	if ( isset( $_GET[ 'group' ] ) ) {
+		if ( $par == 0 )
+			$link .= '?';
+		else
+			$link .= '&';
+		$link .= 'group='.$_GET[ 'group' ];
+		$par ++;
+	}
+	if ( isset( $_GET[ 'volumen' ] ) ) {
+		if ( $par == 0 )
+			$link .= '?';
+		else
+			$link .= '&';
+		$link .= 'volumen='.$_GET[ 'volumen' ];
+		$par ++;
+	}
+	if ( $order != '' ) {
+		if ( $par == 0 )
+			$link .= '?';
+		else
+			$link .= '&';
+		$link .= 'order='.$order;
+		$par ++;
+	}
+	return $link;
+}
+
 read_sizecache( $cache_file );
 
 # Status aller Bots lesen
 $read = '';
 foreach ( $filenames as $key => $filename) {
 	$fp = fopen( $filename, 'r' );
-	$read .= fread($fp, filesize ($filename));
-	fclose($fp);
+	if ( $fp ) {
+		$read .= fread($fp, filesize ($filename));
+		fclose($fp);
+	}
 }
 
 $packs = 0;
@@ -332,10 +407,9 @@ foreach ( $datalines as $key => $data) {
 write_sizecache( $cache_file );
 
 if ( isset( $_GET[ 'group' ] ) ) {
-	$link = '?group='.$_GET[ 'group' ];
-	$hpack = '<a class="head" href="'.$_SERVER[ "PHP_SELF" ].$link.'">PACK</a>';
-	$hgets = '<a class="head" href="'.$_SERVER[ "PHP_SELF" ].$link.'&order=gets">DLs</a>';
-	$hsize = '<a class="head" href="'.$_SERVER[ "PHP_SELF" ].$link.'&order=size">GRÖSSE</a>';
+	$hpack = '<a class="head" href="'.make_self_order( '' ).'">PACK</a>';
+	$hgets = '<a class="head" href="'.make_self_order( 'gets' ).'">DLs</a>';
+	$hsize = '<a class="head" href="'.make_self_order( 'size' ).'">GRÖSSE</a>';
 
 	if ( !isset( $_GET[ 'order' ] ) ) {
 		foreach ( $info as $key => $data)
@@ -401,10 +475,12 @@ if ( isset( $_GET[ 'group' ] ) ) {
 	}
 
 } else {
-	$hpack = '<a class="head" href="'.$_SERVER[ "PHP_SELF" ].'?order=pack">PACKs</a>';
-	$hgets = '<a class="head" href="'.$_SERVER[ "PHP_SELF" ].'?order=gets">DLs</a>';
-	$hsize = '<a class="head" href="'.$_SERVER[ "PHP_SELF" ].'?order=size">GRÖSSE</a>';
-	$hname = '<a class="head" href="'.$_SERVER[ "PHP_SELF" ].'">GRUPPE</a>';
+	$hpack = '<a class="head" href="'.make_self_order( 'pack' ).'">PACKs</a>';
+	$hgets = '<a class="head" href="'.make_self_order( 'gets' ).'">DLs</a>';
+	$hrget = '<a class="head" href="'.make_self_order( 'rget' ).'">DLs/Pack</a>';
+	$hsize = '<a class="head" href="'.make_self_order( 'size' ).'">GRÖSSE</a>';
+	$htvol = '<a class="head" href="'.make_self_order( 'tvol' ).'">Volumen</a>';
+	$hname = '<a class="head" href="'.make_self_order( '' ).'">GRUPPE</a>';
 
 	if ( !isset( $_GET[ 'order' ] ) ) {
 		foreach ( $gruppen as $key => $data)
@@ -424,21 +500,45 @@ if ( isset( $_GET[ 'group' ] ) ) {
 			arsort( $ausgabe );
 			$hgets = 'DLs';
 		}
+		if ( $_GET[ 'order' ] == 'rget' ) {
+			foreach ( $gruppen as $key => $data)
+				$ausgabe[ $key ] = $gruppen[ $key ][ 'xx_gets' ] / $gruppen[ $key ][ 'packs' ];
+			arsort( $ausgabe );
+			$hrget = 'DLs/Pack';
+		}
 		if ( $_GET[ 'order' ] == 'size' ) {
 			foreach ( $gruppen as $key => $data)
 				$ausgabe[ $key ] = $gruppen[ $key ][ 'size' ];
 			arsort( $ausgabe );
 			$hsize = 'GRÖSSE';
 		}
+		if ( $_GET[ 'order' ] == 'tvol' ) {
+			foreach ( $gruppen as $key => $data)
+				$ausgabe[ $key ] = $gruppen[ $key ][ 'trans' ];
+			arsort( $ausgabe );
+			$htvol = 'Volumen';
+		}
+	}
+
+	$tvol1 = '';
+	$rget1 = '';
+	if ( isset( $_GET[ 'volumen' ] ) ) {
+		$tvol1 = '<th class="head">'.$htvol.'</th>';
+		$rget1 = '<th class="head">'.$hrget.'</th>';
+		$linkmore = '&nbsp;<a href="'.make_self_more().'">(weniger)</a>';
+	} else {
+		$linkmore = '&nbsp;<a href="'.make_self_more().'">(mehr)</a>';
 	}
 
 	echo '
 <tr>
 <th class="head">'.$hpack.'</th>
 <th class="head">'.$hgets.'</th>
+'.$rget1.'
 <th class="head">'.$hsize.'</th>
+'.$tvol1.'
 <th class="head">'.$hname.'</th>
-<th class="head">BESCHREIBUNG</th>
+<th class="head">BESCHREIBUNG'.$linkmore.'</th>
 </tr>
 </thead>
 ';
@@ -448,12 +548,22 @@ if ( isset( $_GET[ 'group' ] ) ) {
 	$part = $total[ 'downl' ] - $total[ 'trans' ];
 	$tcount = count($gruppen) - 1;
 
+	$tvol2 = '';
+	$rget2 = '';
+	if ( isset( $_GET[ 'volumen' ] ) ) {
+		$tvol2 = '<th class="right">'.makesize($total[ 'trans' ]).'</th>';
+		$getsperpack = sprintf( "%.1f", $total[ 'xx_gets' ] / $tpacks );
+		$rget2 = '<th class="right">'.$getsperpack.'</th>';
+	}
+
 	echo '
 <tfoot>
 <tr>
 <th class="right">'.$tpacks.'</th>
 <th class="right">'.$total[ 'xx_gets' ].'</th>
+'.$rget2.'
 <th class="right">'.makesize($tsize).'</th>
+'.$tvol2.'
 <th class="head">'.$tcount.'</th>
 <th class="head"><a href="'.$_SERVER[ "PHP_SELF" ].'?group=*">alle Packs</a> ['.makesize($total[ 'trans' ]).'] vollständig heruntergeladen, ['.makesize($part).']&nbsp;unvollständig</th>
 </tr>
@@ -469,16 +579,27 @@ if ( isset( $_GET[ 'group' ] ) ) {
 
 		$tpacks= $gruppen[ $key ][ 'packs' ] / $servers;;
 		$asize = $gruppen[ $key ][ 'size' ] / $servers;
+		$tsize = $gruppen[ $key ][ 'trans' ];
 		$tname = '';
 		if ( isset( $gruppen[ $key ][ 'xx_trno' ] ) )
 			$tname = $gruppen[ $key ][ 'xx_trno' ];
 		$link = $_SERVER[ "PHP_SELF" ].'?group='.$key;
 
+		$tvol3 = '';
+		$rget3 = '';
+		if ( isset( $_GET[ 'volumen' ] ) ) {
+			$tvol3 = '<td class="right">'.makesize($tsize).'</td>';
+			$getsperpack = sprintf( "%.1f", $gruppen[ $key ][ 'xx_gets' ] / $tpacks );
+			$rget3 = '<td class="right">'.$getsperpack.'</td>';
+		}
+
 		echo '
 <tr>
 <td class="right">'.$tpacks.'</td>
 <td class="right">'.$gruppen[ $key ][ 'xx_gets' ].'</td>
+'.$rget3.'
 <td class="right">'.makesize($asize).'</td>
+'.$tvol3.'
 <td class="content">'.$key.'</td>
 <td class="content"><a href="'.$link.'">'.$tname.'</a></td>
 </tr>
