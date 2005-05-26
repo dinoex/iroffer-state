@@ -17,9 +17,12 @@ $nick = ereg_replace( "^/(.*/)*", '', $nick );
 # Laufern mehr als ein Bot mit den gleichen daten?
 $servers = 1;
 
+# force to show no group
+$_GET[ 'group' ] = '*';
+
 # Statusfiles der bots
 $filenames = array(
-	'mybot.stats',
+	'mybot.state',
 );
 
 $cache_file = "size.data";
@@ -304,6 +307,10 @@ function get_xlong( $string ) {
 	return $l;
 }
 
+function get_text( $string ) {
+	return substr( $string, 0, strlen( $string ) - 1 );
+}
+
 read_sizecache( $cache_file );
 
 $packs = 0;
@@ -376,7 +383,7 @@ foreach ( $filenames as $key => $filename) {
 					break;
 				case 3073: # FILE
 					$packs ++;
-					$text = substr( $chunkdata, $j + 8, $jlen - 8 );
+					$text = get_text( substr( $chunkdata, $j + 8, $jlen - 8 ) );
 					$fsize = filesize_cache( $text );
 					$info[ $packs ][ 'pack' ] = $packs;
 					$info[ $packs ][ 'size' ] = $fsize;
@@ -390,7 +397,7 @@ foreach ( $filenames as $key => $filename) {
 					$gruppen[ '*' ][ 'size' ] += $info[ $packs ][ 'size' ];
 					break;
 				case 3074: # DESC
-					$text = substr( $chunkdata, $j + 8, $jlen - 8 );
+					$text = get_text( substr( $chunkdata, $j + 8, $jlen - 8 ) );
 					$info[ $packs ][ 'xx_desc' ] = clean_names( $text );
 					break;
 				case 3075: # NOTE
@@ -406,7 +413,7 @@ foreach ( $filenames as $key => $filename) {
 					$gruppen[ '*' ][ 'trans' ] += $ttrans;
 					break;
 				case 17777: # GROUP NAME
-					$text = substr( $chunkdata, $j + 8, $jlen - 8 );
+					$text = get_text( substr( $chunkdata, $j + 8, $jlen - 8 ) );
 					$info[ $packs ][ 'xx_trno' ] = $text;
 					$gr = $text;
 					if ( !isset( $gruppen[ $gr ][ 'packs' ] ) ) {
