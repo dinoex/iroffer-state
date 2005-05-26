@@ -9,9 +9,9 @@
 #
 
 # IRC-Nick des Bots
-$nick = ereg_replace( "/[^/]*[.]php$", '', $_SERVER[ "PHP_SELF" ] );
-$nick = ereg_replace( "^/(.*/)*", '', $nick );
-#$nick = "XDCC|".$nick;
+$nick = ereg_replace( '/[^/]*[.]php$', '', $_SERVER[ 'PHP_SELF' ] );
+$nick = ereg_replace( '^/(.*/)*', '', $nick );
+#$nick = 'XDCC|'.$nick;
 #$nick = 'XDCC|irofferbot';
 
 # force to show no group
@@ -22,12 +22,13 @@ $filenames = array(
 	'mybot.xdcc',
 );
 
-$cache_file = "size.data";
+$cache_file = 'size.data';
+$base_path = './';
 
-$highlight_color = '#81A381';
+$javascript = 1;
 
 $strip_in_names = array (
-	"^ *- *",
+	'^ *- *',
 	"\002",
 	"\0030[,]0",
 	"\0030[,]5",
@@ -48,79 +49,17 @@ $strip_in_names = array (
 ?>
 <html>
 <head>
-<style type="text/css">
-body{
-background-color: #ffffff;
-color: #000000;
-height: 100%;
-font-family: Arial;
-font-size:  small;
-text-align: center;
-}
-a.head {
-background-color: #81A381;
-color: #ffffff;
-font-family: Verdana,Arial,Tahoma,sans-serif;
-font-size: 9pt;
-font-weight: bold;
-text-align: left;
-}
-th.head {
-background-color: #81A381;
-color: #ffffff;
-font-family: Verdana,Arial,Tahoma,sans-serif;
-font-size: 9pt;
-font-weight: bold;
-text-align: left;
-padding-left: 5px;
-padding-right: 5px;
-}
-th.right {
-background-color: #81A381;
-color: #ffffff;
-font-family: Verdana,Arial,Tahoma,sans-serif;
-font-size: 9pt;
-font-weight: bold;
-text-align: right;
-padding-left: 5px;
-padding-right: 5px;
-}
-td.content {
-background-color: #eafaea;
-color: #252525;
-font-family: Verdana,Arial,Tahoma;
-font-size: 10pt;
-border-bottom: 1px solid #cccccc;
-text-align: left;
-padding-left: 5px;
-padding-right: 5px;
-}
-td.right {
-background-color: #eafaea;
-color: #252525;
-font-family: Verdana,Arial,Tahoma;
-font-size: 10pt;
-border-bottom: 1px solid #cccccc;
-text-align: right;
-padding-left: 5px;
-padding-right: 5px;
-}
-#list h1 {
-font-family: Verdana,Arial,Tahoma;
-font-size: 14pt;
-color: #a0a0a0;
-}
-</style>
+<meta name="generator" content="iroffer-xdcc 0.7, iroffer.dinoex.net">
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <meta http-equiv="content-language" content="de-de">
 <link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" type="text/css" href="iroffer-state.css">
 <title><?php echo $nick; ?></title>
+<?php
+if ( $javascript > 0 ) {
+	echo '
 <script language=javascript type=text/javascript>
 <!--
-function highlight(which,color){
-if (document.all||document.getElementById)
-    which.style.backgroundColor=color
-}
 function selectThis(src) {
     document.selection.clear;
     txt = eval(src +".innerText");
@@ -132,29 +71,14 @@ function selectThis(src) {
     txtRange.execCommand("Copy");
     alert(txt + " wurde in die Zwischenablage kopiert");
 }
-//--!>
+-->
 </script>
+	';
+}
+?>
 </head>
 <body>
 <center>
-
-<?php
-
-# Ueberschrift:
-if ( isset( $_GET[ 'group' ] ) ) {
-	echo '<h1>'.$nick." Datei-Liste</h1>\n";
-	echo "\n";
-	echo '<p>Download im IRC mit "/msg '.$nick.' xdcc send #nummer"</p>';
-	echo "\n";
-} else {
-	echo '<h1>'.$nick." Gruppen-Liste</h1>\n";
-	echo "\n";
-}
-
-?>
-
-<table cellpadding="2" cellspacing="0" summary="list">
-<thead>
 
 <?php
 
@@ -165,40 +89,43 @@ function makesize( $nbytes ) {
 	global $debug;
 
 	if ( $nbytes < 1000 ) {
-		return sprintf( "%3db", $nbytes );
+		return sprintf( '%db', $nbytes );
 	}
 	$nbytes = ( $nbytes + 512 ) / 1024;
 	if ( $nbytes < 1000 ) {
-		return sprintf( "%3dk", $nbytes );
+		return sprintf( '%dk', $nbytes );
 	}
 	$nbytes = ( $nbytes + 512 ) / 1024;
-	if ( $debug != "" ) {
-		return sprintf( "% dM", $nbytes );
+	if ( $debug != '' ) {
+		return sprintf( '%dM', $nbytes );
 	}
 	if ( $nbytes < 1000 ) {
-		return sprintf( "%3dM", $nbytes );
+		return sprintf( '%dM', $nbytes );
 	}
 	if ( $nbytes < 10000 ) {
-		return sprintf( "%3.1fG", $nbytes / 1024 );
+		return sprintf( '%.1fG', $nbytes / 1024 );
 	}
 	$nbytes = ( $nbytes + 512 ) / 1024;
 	if ( $nbytes < 1000 ) {
-		return sprintf( "%3dG", $nbytes );
+		return sprintf( '%dG', $nbytes );
+	}
+	if ( $nbytes < 10000 ) {
+		return sprintf( '%.1fT', $nbytes / 1024 );
 	}
 	$nbytes = ( $nbytes + 512 ) / 1024;
 	if ( $nbytes < 1000 ) {
-		return sprintf( "%3dT", $nbytes );
+		return sprintf( '%dT', $nbytes );
 	}
-	return sprintf( "%3dE", $nbytes );
+	return sprintf( '%dE', $nbytes );
 }
 
 function clean_names( $text2 ) {
 	global $strip_in_names;
 
 	foreach ( $strip_in_names as $skey => $sdata) {
-		$text2 = ereg_replace( $sdata, "", $text2 );
+		$text2 = ereg_replace( $sdata, '', $text2 );
 	}
-	return ereg_replace( "[&]", "&amp;", $text2 );
+	return $text2;
 }
 
 function read_sizecache( $filename ) {
@@ -206,14 +133,17 @@ function read_sizecache( $filename ) {
 	global $sizecache_dirty;
 
 	$sizecache_dirty = 0;
+	$len = filesize($filename);
+	if ( $len <= 0 ) 
+		return;
 	$fp = fopen( $filename, 'r' );
 	if ( $fp ) {
-		$tread = fread($fp, filesize ($filename));
+		$tread = fread($fp, $len);
 		fclose($fp);
 		$tlines = explode("\n", $tread);
 		foreach ( $tlines as $ykey => $ydata) {
-			if ( ereg( "[:]", $ydata ) ) {
-				list( $key, $tsize ) = explode(":", $ydata, 2);
+			if ( ereg( '[:]', $ydata ) ) {
+				list( $key, $tsize ) = explode(':', $ydata, 2);
 				$sizecache[ $key ] = $tsize;
 			}
 		}
@@ -238,33 +168,43 @@ function write_sizecache( $filename ) {
 function filesize_cache( $filename ) {
 	global $sizecache;
 	global $sizecache_dirty;
+	global $base_path;
 
 	if ( isset( $sizecache[ $filename ] ) ) {
 		return $sizecache[ $filename ];
 	}
-	$tsize = filesize( $filename );
+	$localfile = $filename;
+	if ( !ereg( '^/', $filename ) )
+		$localfile = $base_path.$filename;
+	$tsize = filesize( $localfile );
 	$sizecache[ $filename ] = $tsize;
 	$sizecache_dirty ++;
 	return $tsize;
 }
 
+function cgi_escape( $string ) {
+	$string = ereg_replace( '[&]', '%26', $string );
+	$string = ereg_replace( '[+]', '%2B', $string );
+	return $string;
+}
+
 function make_self_more() {
 	$par = 0;
-	$link = $_SERVER[ "PHP_SELF" ];
+	$link = $_SERVER[ 'PHP_SELF' ];
 	# options:
 	if ( isset( $_GET[ 'group' ] ) ) {
 		if ( $par == 0 )
 			$link .= '?';
 		else
-			$link .= '&';
-		$link .= 'group='.$_GET[ 'group' ];
+			$link .= '&amp;';
+		$link .= 'group='.cgi_escape($_GET[ 'group' ]);
 		$par ++;
 	}
 	if ( !isset( $_GET[ 'volumen' ] ) ) {
 		if ( $par == 0 )
 			$link .= '?';
 		else
-			$link .= '&';
+			$link .= '&amp;';
 		$link .= 'volumen=1';
 		$par ++;
 	}
@@ -272,7 +212,7 @@ function make_self_more() {
 		if ( $par == 0 )
 			$link .= '?';
 		else
-			$link .= '&';
+			$link .= '&amp;';
 		$link .= 'order='.$_GET[ 'order' ];
 		$par ++;
 	}
@@ -281,21 +221,21 @@ function make_self_more() {
 
 function make_self_order( $order ) {
 	$par = 0;
-	$link = $_SERVER[ "PHP_SELF" ];
+	$link = $_SERVER[ 'PHP_SELF' ];
 	# options:
 	if ( isset( $_GET[ 'group' ] ) ) {
 		if ( $par == 0 )
 			$link .= '?';
 		else
-			$link .= '&';
-		$link .= 'group='.$_GET[ 'group' ];
+			$link .= '&amp;';
+		$link .= 'group='.cgi_escape($_GET[ 'group' ]);
 		$par ++;
 	}
 	if ( isset( $_GET[ 'volumen' ] ) ) {
 		if ( $par == 0 )
 			$link .= '?';
 		else
-			$link .= '&';
+			$link .= '&amp;';
 		$link .= 'volumen='.$_GET[ 'volumen' ];
 		$par ++;
 	}
@@ -303,8 +243,62 @@ function make_self_order( $order ) {
 		if ( $par == 0 )
 			$link .= '?';
 		else
-			$link .= '&';
+			$link .= '&amp;';
 		$link .= 'order='.$order;
+		$par ++;
+	}
+	return $link;
+}
+
+function make_self_group( $group ) {
+	$par = 0;
+	$link = $_SERVER[ 'PHP_SELF' ];
+	# options:
+	if ( $group != '' ) {
+		if ( $par == 0 )
+			$link .= '?';
+		else
+			$link .= '&amp;';
+		$link .= 'group='.cgi_escape($group);
+		$par ++;
+	}
+	if ( isset( $_GET[ 'volumen' ] ) ) {
+		if ( $par == 0 )
+			$link .= '?';
+		else
+			$link .= '&amp;';
+		$link .= 'volumen='.$_GET[ 'volumen' ];
+		$par ++;
+	}
+	if ( isset( $_GET[ 'order' ] ) ) {
+		if ( $par == 0 )
+			$link .= '?';
+		else
+			$link .= '&amp;';
+		$link .= 'order='.$_GET[ 'order' ];
+		$par ++;
+	}
+	return $link;
+}
+
+function make_self_back( $order ) {
+	$par = 0;
+	$link = $_SERVER[ 'PHP_SELF' ];
+	# options:
+	if ( isset( $_GET[ 'volumen' ] ) ) {
+		if ( $par == 0 )
+			$link .= '?';
+		else
+			$link .= '&amp;';
+		$link .= 'volumen='.$_GET[ 'volumen' ];
+		$par ++;
+	}
+	if ( isset( $_GET[ 'order' ] ) ) {
+		if ( $par == 0 )
+			$link .= '?';
+		else
+			$link .= '&amp;';
+		$link .= 'order='.$_GET[ 'order' ];
 		$par ++;
 	}
 	return $link;
@@ -312,8 +306,8 @@ function make_self_order( $order ) {
 
 read_sizecache( $cache_file );
 
-# Status aller Bots lesen
 $read = '';
+# Status aller Bots lesen
 foreach ( $filenames as $key => $filename) {
 	$fp = fopen( $filename, 'r' );
 	if ( $fp ) {
@@ -322,7 +316,7 @@ foreach ( $filenames as $key => $filename) {
 	}
 }
 
-$nick2 = ereg_replace( "[^A-Za-z_0-9]", '', $nick );
+$nick2 = ereg_replace( '[^A-Za-z_0-9]', '', $nick );
 $packs = 0;
 $fpacks = 0;
 $total[ 'packs' ] = 0;
@@ -338,21 +332,21 @@ $gruppen[ '*' ][ 'trans' ] = 0;
 $newfile = 0;
 $datalines = explode("\n", $read);
 foreach ( $datalines as $key => $data) {
-	if ( $data == "" )
+	if ( $data == '' )
 		continue;
 
-	if ( ereg( "^Do Not Edit This File[:] ", $data ) ) {
-		list( $key, $text ) = explode(": ", $data, 2);
-		list( $irec, $iband, $itotal, $irest ) = explode(" ", $text, 4);
+	if ( ereg( '^Do Not Edit This File[:] ', $data ) ) {
+		list( $key, $text ) = explode(': ', $data, 2);
+		list( $irec, $iband, $itotal, $irest ) = explode(' ', $text, 4);
 		$total[ 'downl' ] += $itotal;
 		$packs = 0;
 		continue;
 	}
-	if ( !ereg( " ", $data ) )
+	if ( !ereg( ' ', $data ) )
 		continue;
 
-	list( $key, $text ) = explode(" ", $data, 2);
-	if ( $text == "" )
+	list( $key, $text ) = explode(' ', $data, 2);
+	if ( $text == '' )
 		continue;
 
 	# removed packages
@@ -415,6 +409,10 @@ foreach ( $datalines as $key => $data) {
 		}
 		continue;
 	}
+	if ( $key == 'xx_note' ) {
+		$info[ $fpacks ][ 'xx_note' ] = clean_names( $text );
+		continue;
+	}
 
 	if ( $key != 'xx_data' )
 		continue;
@@ -441,10 +439,32 @@ foreach ( $datalines as $key => $data) {
 
 write_sizecache( $cache_file );
 
+# Ueberschrift:
 if ( isset( $_GET[ 'group' ] ) ) {
-	$hpack = '<a class="head" href="'.make_self_order( '' ).'">PACK</a>';
-	$hgets = '<a class="head" href="'.make_self_order( 'gets' ).'">DLs</a>';
-	$hsize = '<a class="head" href="'.make_self_order( 'size' ).'">GRÖSSE</a>';
+	echo '<h1>'.$nick." Datei-Liste</h1>\n";
+	echo "\n";
+	echo '<p>Download im IRC mit "/msg '.$nick.' xdcc send #nummer"</p>';
+	echo "\n";
+} else {
+	echo '<h1>'.$nick." Gruppen-Liste</h1>\n";
+	echo "\n";
+}
+
+?>
+
+<table cellpadding="2" cellspacing="0" summary="list">
+<thead>
+
+<?php
+
+
+if ( isset( $_GET[ 'group' ] ) ) {
+	$hpack = '<a class="head" title="sortieren nach Pack-Nr."
+href="'.make_self_order( '' ).'">PACK</a>';
+	$hgets = '<a class="head" title="sortieren nach Anzahl Downloads"
+href="'.make_self_order( 'gets' ).'">DLs</a>';
+	$hsize = '<a class="head" title="sortieren nach Göße der Files"
+href="'.make_self_order( 'size' ).'">GRÖSSE</a>';
 
 	if ( !isset( $_GET[ 'order' ] ) ) {
 		foreach ( $info as $key => $data)
@@ -452,26 +472,36 @@ if ( isset( $_GET[ 'group' ] ) ) {
 		asort( $ausgabe );
 		$hpack = 'PACK';
 	} else {
+		$ofound = 0;
 		if ( $_GET[ 'order' ] == 'gets' ) {
 			foreach ( $info as $key => $data)
 				$ausgabe[ $key ] = $info[ $key ][ 'xx_gets' ];
 			arsort( $ausgabe );
 			$hgets = 'DLs';
+			$ofound = 1;
 		}
 		if ( $_GET[ 'order' ] == 'size' ) {
 			foreach ( $info as $key => $data)
 				$ausgabe[ $key ] = $info[ $key ][ 'size' ];
 			arsort( $ausgabe );
 			$hsize = 'GRÖSSE';
+			$ofound = 1;
+		}
+		if ( $ofound == 0 ) {
+			foreach ( $info as $key => $data)
+				$ausgabe[ $key ] = $key;
+			asort( $ausgabe );
+			$hpack = 'PACK';
 		}
 	}
+	$linkmore = '&nbsp;<a title="zurück" href="'.make_self_back( '' ).'">(zurück)</a>';
 
 	echo '
 <tr>
 <th class="head">'.$hpack.'</th>
 <th class="head">'.$hgets.'</th>
 <th class="head">'.$hsize.'</th>
-<th class="head">BESCHREIBUNG</th>
+<th class="head">BESCHREIBUNG'.$linkmore.'</th>
 </tr>
 </thead>
 ';
@@ -493,7 +523,7 @@ if ( isset( $_GET[ 'group' ] ) ) {
 ';
 
 	foreach ( $ausgabe as $key => $data) {
-		if ( $key == "" )
+		if ( $key == '' )
 			continue;
 		if ( ( $_GET[ 'group' ] != '*' )
 		&& ( $info[ $key ][ 'xx_data' ] != $_GET[ 'group' ] ) )
@@ -503,30 +533,41 @@ if ( isset( $_GET[ 'group' ] ) ) {
 		$tname = $info[ $key ][ 'xx_desc' ];
 		$jsid= $nick2.'_'.$tpack;
 
-		$tname = '<span width="100%" onmouseover="highlight(this,\''.
-			$highlight_color.'\')" style="CURSOR: pointer" onclick=\'selectThis("'.
-			$jsid.'");\' onmouseout="highlight(this,\'\')" href="">'.
-			$tname."</span>\n".
-			'<span id="'.$jsid.'" style="VISIBILITY: hidden; POSITION: absolute">'.
-			'/msg '.$nick.' xdcc send #'.$tpack."</span>\n";
+		$tname = htmlspecialchars( $tname);
+		if ( $javascript > 0 ) {
+			$tname = '<span class="selectable" onclick=javascript:selectThis(\''.
+				$jsid.'\');>'.
+				$tname."</span>\n".
+				'<span id="'.$jsid.'" class="hidden">'.
+				'/msg '.$nick.' xdcc send #'.$tpack."</span>\n";
+		}
+		if ( isset( $info[ $key ][ 'xx_note' ] ) )
+			$tname .= '<br>'.$info[ $key ][ 'xx_note' ];
 
+		$label = "Download mit:\n/msg ".$nick.' xdcc send #'.$tpack."\n";
 		echo '
 <tr>
 <td class="right">#'.$tpack.'</td>
 <td class="right">'.$info[ $key ][ 'xx_gets' ].'</td>
 <td class="right">'.makesize($info[ $key ][ 'size' ]).'</td>
-<td class="content">'.$tname.'</td>
+<td class="content" title="'.$label.'">'.$tname.'</td>
 </tr>
 ';
 	}
 
 } else {
-	$hpack = '<a class="head" href="'.make_self_order( 'pack' ).'">PACKs</a>';
-	$hgets = '<a class="head" href="'.make_self_order( 'gets' ).'">DLs</a>';
-	$hrget = '<a class="head" href="'.make_self_order( 'rget' ).'">DLs/Pack</a>';
-	$hsize = '<a class="head" href="'.make_self_order( 'size' ).'">GRÖSSE</a>';
-	$htvol = '<a class="head" href="'.make_self_order( 'tvol' ).'">Volumen</a>';
-	$hname = '<a class="head" href="'.make_self_order( '' ).'">GRUPPE</a>';
+	$hpack = '<a class="head" title="sortieren nach Pack-Nr."
+href="'.make_self_order( 'pack' ).'">PACKs</a>';
+	$hgets = '<a class="head" title="sortieren nach Anzahl Downloads"
+href="'.make_self_order( 'gets' ).'">DLs</a>';
+	$hrget = '<a class="head" title="sortieren nach Downloads per Datei"
+href="'.make_self_order( 'rget' ).'">DLs/Pack</a>';
+	$hsize = '<a class="head" title="sortieren nach Göße der Files"
+href="'.make_self_order( 'size' ).'">GRÖSSE</a>';
+	$htvol = '<a class="head" title="sortieren nach Übertragusngsvolumen"
+href="'.make_self_order( 'tvol' ).'">Volumen</a>';
+	$hname = '<a class="head" title="sortieren nach Guppe"
+href="'.make_self_order( '' ).'">GRUPPE</a>';
 
 	if ( !isset( $_GET[ 'order' ] ) ) {
 		foreach ( $gruppen as $key => $data)
@@ -571,9 +612,9 @@ if ( isset( $_GET[ 'group' ] ) ) {
 	if ( isset( $_GET[ 'volumen' ] ) ) {
 		$tvol1 = '<th class="head">'.$htvol.'</th>';
 		$rget1 = '<th class="head">'.$hrget.'</th>';
-		$linkmore = '&nbsp;<a href="'.make_self_more().'">(weniger)</a>';
+		$linkmore = '&nbsp;<a title="Volumen ausblenden" href="'.make_self_more().'">(weniger)</a>';
 	} else {
-		$linkmore = '&nbsp;<a href="'.make_self_more().'">(mehr)</a>';
+		$linkmore = '&nbsp;<a title="Volumen anzeigen" href="'.make_self_more().'">(mehr)</a>';
 	}
 
 	echo '
@@ -598,7 +639,7 @@ if ( isset( $_GET[ 'group' ] ) ) {
 	$rget2 = '';
 	if ( isset( $_GET[ 'volumen' ] ) ) {
 		$tvol2 = '<th class="right">'.makesize($total[ 'trans' ]).'</th>';
-		$getsperpack = sprintf( "%.1f", $total[ 'xx_gets' ] / $tpacks );
+		$getsperpack = sprintf( '%.1f', $total[ 'xx_gets' ] / $tpacks );
 		$rget2 = '<th class="right">'.$getsperpack.'</th>';
 	}
 
@@ -611,14 +652,14 @@ if ( isset( $_GET[ 'group' ] ) ) {
 <th class="right">'.makesize($tsize).'</th>
 '.$tvol2.'
 <th class="head">'.$tcount.'</th>
-<th class="head"><a href="'.$_SERVER[ "PHP_SELF" ].'?group=*">alle Packs</a> ['.makesize($total[ 'trans' ]).'] vollständig heruntergeladen, ['.makesize($part).']&nbsp;unvollständig</th>
+<th class="head"><a title="alle Packs in einer Liste anzeigen" href="'.make_self_group( '*' ).'">alle Packs</a> ['.makesize($total[ 'trans' ]).'] vollständig heruntergeladen, ['.makesize($part).']&nbsp;unvollständig</th>
 </tr>
 </tfoot>
 <tbody>
 ';
 
 	foreach ( $ausgabe as $key => $data) {
-		if ( $key == "" )
+		if ( $key == '' )
 			continue;
 		if ( $key == '*' )
 			continue;
@@ -626,28 +667,18 @@ if ( isset( $_GET[ 'group' ] ) ) {
 		$tpacks= $gruppen[ $key ][ 'packs' ];
 		$asize = $gruppen[ $key ][ 'size' ];
 		$tsize = $gruppen[ $key ][ 'trans' ];
-		$tname = '';
+		$tname = $key;
 		if ( isset( $gruppen[ $key ][ 'xx_trno' ] ) )
 			$tname = $gruppen[ $key ][ 'xx_trno' ];
-		$link = $_SERVER[ "PHP_SELF" ].'?group='.$key;
+		$link = make_self_group( $key );
 
 		$tvol3 = '';
 		$rget3 = '';
 		if ( isset( $_GET[ 'volumen' ] ) ) {
 			$tvol3 = '<td class="right">'.makesize($tsize).'</td>';
-			$getsperpack = sprintf( "%.1f", $gruppen[ $key ][ 'xx_gets' ] / $tpacks );
+			$getsperpack = sprintf( '%.1f', $gruppen[ $key ][ 'xx_gets' ] / $tpacks );
 			$rget3 = '<td class="right">'.$getsperpack.'</td>';
 		}
-
-		$jsid= $nick2.'_'.ereg_replace( "[^A-Za-z_0-9]", '', $key );
-
-		$tkey = '<span width="100%" onmouseover="highlight(this,\''.
-			$highlight_color.'\')" style="CURSOR: pointer" onclick=\'selectThis("'.
-			$jsid.'");\' onmouseout="highlight(this,\'\')" href="">'.
-			$key."</span>\n".
-			'<span id="'.$jsid.'" style="VISIBILITY: hidden; POSITION: absolute">'.
-			'/msg '.$nick.' xdcc list '.$key."</span>\n";
-
 		echo '
 <tr>
 <td class="right">'.$tpacks.'</td>
@@ -655,8 +686,8 @@ if ( isset( $_GET[ 'group' ] ) ) {
 '.$rget3.'
 <td class="right">'.makesize($asize).'</td>
 '.$tvol3.'
-<td class="content">'.$tkey.'</td>
-<td class="content"><a href="'.$link.'">'.$tname.'</a></td>
+<td class="content">'.htmlspecialchars($key).'</td>
+<td class="content"><a title="Liste dieser Packs anzeigen" href="'.$link.'">'.htmlspecialchars($tname).'</a></td>
 </tr>
 ';
 	}
