@@ -21,6 +21,7 @@ $filenames = array(
 
 $cache_file = 'size.data';
 $default_group = '.neu';
+$base_path = './';
 
 $javascript = 1;
 
@@ -127,9 +128,13 @@ function clean_names( $text2 ) {
 function read_sizecache( $filename ) {
 	global $sizecache;
 	global $sizecache_dirty;
+	global $base_path;
 
 	$sizecache_dirty = 0;
-	$fp = fopen( $filename, 'r' );
+	$localfile = $filename;
+	if ( !ereg( '^/', $filename ) )
+		$localfile = $base_path.$filename;
+	$fp = fopen( $localfile, 'r' );
 	if ( $fp ) {
 		$tread = fread($fp, filesize ($filename));
 		fclose($fp);
@@ -665,10 +670,10 @@ href="'.make_self_order( 'size' ).'">GRÖSSE</a>';
 			$tname .= ' (gesperrt)';
 		$tname = htmlspecialchars( $tname);
 		if ( $javascript > 0 ) {
-			$tname = '<span class="selectable" onclick=\'selectThis("'.
-				$jsid.'");\'>'.
+			$tname = '<span class="selectable" onclick=javascript:selectThis(\''.
+				$jsid.'\');>'.
 				$tname."</span>\n".
-				'<span id="'.$jsid.'" style="VISIBILITY: hidden; POSITION: absolute">'.
+				'<span id="'.$jsid.'" class="hidden">'.
 				'/msg '.$nick.' xdcc send #'.$tpack."</span>\n";
 		}
 		if ( isset( $info[ $key ][ 'xx_note' ] ) )
