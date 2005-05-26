@@ -47,6 +47,7 @@ $strip_in_names = array (
 ?>
 <html>
 <head>
+<meta name="generator" content="iroffer-state 1.1, iroffer.dinoex.net">
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <meta http-equiv="content-language" content="de-de">
 <link rel="icon" href="/favicon.ico">
@@ -134,9 +135,12 @@ function read_sizecache( $filename ) {
 	$localfile = $filename;
 	if ( !ereg( '^/', $filename ) )
 		$localfile = $base_path.$filename;
+	$len = filesize($filename);
+	if ( $len <= 0 ) 
+		return;
 	$fp = fopen( $localfile, 'r' );
 	if ( $fp ) {
-		$tread = fread($fp, filesize ($filename));
+		$tread = fread($fp, $len);
 		fclose($fp);
 		$tlines = explode("\n", $tread);
 		foreach ( $tlines as $ykey => $ydata) {
@@ -347,6 +351,79 @@ function read_removed( $statefile ) {
 	}
 }
 
+function read_status( $statefile ) {
+	global $total;
+
+	$filename = ereg_replace( '[.]state$', '.txt', $statefile );
+
+	if ( !file_exists( $filename ) )
+		return;
+
+	$read = '';
+	$fp = fopen( $filename, 'r' );
+	if ( $fp ) {
+		$read .= fread($fp, filesize ($filename));
+		fclose($fp);
+	}
+
+	$datalines = explode("\n", $read);
+	foreach ( $datalines as $key => $data) {
+		if ( $data == '' )
+			continue;
+
+		if ( ereg( '^ *[*]*  [0-9]* packs ', $data ) ) {
+			$words = explode(' ', $data);
+
+			if ( !isset( $total[ 'freeslots' ] ) )
+				$total[ 'freeslots' ] = $words[ 9 ];
+			if ( !isset( $total[ 'maxslots' ] ) )
+				$total[ 'maxslots' ] = $words[ 11 ];
+
+			for ( $i = 14; isset( $words[ $i ]); $i += 2 ) {
+				switch ( $words[ $i ] ) {
+				case 'Queue:':
+					if ( !isset( $total[ 'queue' ] ) )
+						$total[ 'queue' ] = $words[ $i + 1 ];
+					break;
+				case 'Min:':
+					if ( !isset( $total[ 'minspeed' ] ) )
+						$total[ 'minspeed' ] = $words[ $i + 1 ];
+					break;
+				case 'Max:':
+					if ( !isset( $total[ 'maxspeed' ] ) )
+						$total[ 'maxspeed' ] = $words[ $i + 1 ];
+					break;
+				case 'Record:':
+					if ( !isset( $total[ 'record' ] ) )
+						$total[ 'record' ] = $words[ $i + 1 ];
+					break;
+				}
+			}
+			continue;
+		}
+		if ( ereg( '^ *[*]*  Bandwidth Usage ', $data ) ) {
+			$words = explode(' ', $data);
+			if ( !isset( $total[ 'current' ] ) )
+				$total[ 'current' ] = $words[ 9 ];
+			
+			for ( $i = 10; isset( $words[ $i ]); $i += 2 ) {
+				switch ( $words[ $i ] ) {
+				case 'Cap:':
+					if ( !isset( $total[ 'cap' ] ) )
+						$total[ 'cap' ] = $words[ $i + 1 ];
+					break;
+				case 'Record:':
+					if ( !isset( $total[ 'send' ] ) )
+						$total[ 'send' ] = $words[ $i + 1 ];
+					break;
+				}
+			}
+			continue;
+		}
+		break;
+	}
+}
+
 function get_long( $string ) {
 	$l = ord( substr( $string, 0, 1 ) );
 	$l = $l * 256;
@@ -413,6 +490,7 @@ $gruppen[ '*' ][ 'trans' ] = 0;
 # Status aller Bots lesen
 foreach ( $filenames as $key => $filename) {
 	read_removed( $filename );
+	read_status( $filename );
 
 	$filebytes = 0;
 	$filedata = '';
@@ -443,6 +521,25 @@ foreach ( $filenames as $key => $filename) {
 			$tver = ereg_replace( ',.*$', '', $tver );
 			$tver = ereg_replace( '\[.*\]', '', $tver );
 			$total[ 'version' ] = $tver;
+			break;
+		case 257: # TIMESTAMP
+			$text = get_long( substr( $filedata, $i + 8, 4 ) );
+			if ( isset( $total[ 'time' ] ) ) {
+				if ( $total[ 'time' ] > $text )
+					break;
+			}
+			$total[ 'time' ] = $text;
+			break;
+		case 514: # TOTAL_SENT
+			$text = substr( $filedata, $i + 8, $len - 8 );
+			$itotal = get_xlong( $text );
+			$total[ 'downl' ] += $itotal;
+			$packs = 0;
+			break;
+		case 515: # TOTAL_UPTIME
+			$text = substr( $filedata, $i + 8, $len - 8 );
+			$itotal = get_xlong( $text );
+			$total[ 'uptime' ] += $itotal;
 			break;
 		case 3072: # XDCCS
 			$chunkdata = substr( $filedata, $i, $len );
@@ -859,8 +956,15 @@ $statistik = array (
 #	'version' => 'Version',
 #	'uptime' => 'Online',
 #	'time' => 'letztes Update',
-#	'xfr' => 'Tansfer Maximum',
-#	'send' => 'Send Maximum',
+	'freeslots' => 'Freie Slots',
+#	'maxslots' => 'Anzahl Slots',
+	'queue' => 'Warteschlange',
+#	'minspeed' => 'Mindest-Rate',
+#	'maxspeed' => 'Maximale-Rate',
+	'current' => 'Aktuelle Bandbreite',
+#	'cap' => 'Maximale Bandbreite',
+#	'record' => 'Rekord-Rate',
+#	'send' => 'Rekord-Download',
 #	'daily' => "Traffic heute",
 #	'weekly' => "Traffic diese Woche",
 #	'monthly' => "Traffic diesem Monat",
@@ -870,7 +974,7 @@ foreach ( $statistik as $skey => $sdata) {
 	if ( !isset( $total[ $skey ] ) )
 		continue;
 	echo '<tr><td>'.$sdata."</td>\n";
-	echo '<td'.$label.'>'.$total[ $skey ]."</td></tr>\n";
+	echo '<td>'.$total[ $skey ]."</td></tr>\n";
 }
 
 ?>
