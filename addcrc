@@ -1,0 +1,18 @@
+#!/bin/sh
+for name in "$@"
+do
+	sum=`cksum -o 3 "${name}" |
+	awk '{
+		CRC = $1
+		if ( CRC > 2^31 )
+			CRC -= 2^32
+		$1 = sprintf( "%08X", CRC )
+		$2 = ""
+		print $1
+	}'`
+	neu="${name%.avi}[${sum}].avi"
+	neu=`echo ${neu} | sed -e "s= =_=g"`
+	echo \
+	mv -i "${name}" "${neu}"
+	mv -i "${name}" "${neu}"
+done
