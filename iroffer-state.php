@@ -157,7 +157,7 @@ function write_sizecache( $filename ) {
 	$fp = fopen( $filename, 'w' );
 	if ( $fp ) {
 		foreach ( $sizecache as $key => $ydata ) {
-		fwrite( $fp, $key.':'.$ydata."\n" );
+			fwrite( $fp, $key.':'.$ydata."\n" );
 		}
 		fclose($fp);
 	}
