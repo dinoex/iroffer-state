@@ -14,9 +14,6 @@ $nick = ereg_replace( "^/(.*/)*", '', $nick );
 #$nick = "XDCC|".$nick;
 #$nick = 'XDCC|irofferbot';
 
-# Laufern mehr als ein Bot mit den gleichen daten?
-$servers = 1;
-
 # force to show no group
 #$_GET[ 'group' ] = '*';
 
@@ -119,6 +116,7 @@ color: #a0a0a0;
 <link rel="icon" href="/favicon.ico">
 <title><?php echo $nick; ?></title>
 <script language=javascript type=text/javascript>
+<!--
 function highlight(which,color){
 if (document.all||document.getElementById)
     which.style.backgroundColor=color
@@ -134,6 +132,7 @@ function selectThis(src) {
     txtRange.execCommand("Copy");
     alert(txt + " wurde in die Zwischenablage kopiert");
 }
+//--!>
 </script>
 </head>
 <body>
@@ -325,6 +324,7 @@ foreach ( $filenames as $key => $filename) {
 
 $nick2 = ereg_replace( "[^A-Za-z_0-9]", '', $nick );
 $packs = 0;
+$fpacks = 0;
 $total[ 'packs' ] = 0;
 $total[ 'size' ] = 0;
 $total[ 'downl' ] = 0;
@@ -335,6 +335,7 @@ $gruppen[ '*' ][ 'size' ] = 0;
 $gruppen[ '*' ][ 'xx_gets' ] = 0;
 $gruppen[ '*' ][ 'trans' ] = 0;
 
+$newfile = 0;
 $datalines = explode("\n", $read);
 foreach ( $datalines as $key => $data) {
 	if ( $data == "" )
@@ -358,8 +359,11 @@ foreach ( $datalines as $key => $data) {
 	if ( $irest == '-' ) {
 		if ( $key == 'xx_file' ) {
 			$fsize = filesize_cache( $text );
+			if ( isset( $seen[ $text ] ) )
+				continue;
+			$seen[ $text ] = 0;
 			$total[ 'packs' ] ++;
-			$total[ 'size' ] += filesize( $text );
+			$total[ 'size' ] += $fsize;
 		}
 		if ( $key == 'xx_gets' ) {
 			$total[ 'xx_gets' ] += $text;
@@ -369,6 +373,7 @@ foreach ( $datalines as $key => $data) {
 	}
 
 	if ( $key == 'xx_file' ) {
+		$newfile = 0;
 		$packs ++;
 		$fsize = filesize_cache( $text );
 		$info[ $packs ][ 'pack' ] = $packs;
@@ -377,25 +382,32 @@ foreach ( $datalines as $key => $data) {
 			$info[ $packs ][ 'xx_gets' ] = 0;
 			$info[ $packs ][ 'trans' ] = 0;
 		}
-		$total[ 'packs' ] ++;
-		$total[ 'size' ] += $fsize;
+		if ( !isset( $seen[ $text ] ) ) {
+			$newfile = 1;
+			$seen[ $text ] = $packs;
+			$total[ 'packs' ] ++;
+			$total[ 'size' ] += $fsize;
+		}
+		$fpacks = $seen[ $text ];
 	}
 
 	if ( $key == 'xx_gets' ) {
 		$tgets = $text;
-		$ttrans = $info[ $packs ][ 'size' ] * $tgets;
-		$info[ $packs ][ $key ] += $tgets;
-		$info[ $packs ][ 'trans' ] += $ttrans;
+		$ttrans = $info[ $fpacks ][ 'size' ] * $tgets;
+		$info[ $fpacks ][ $key ] += $tgets;
+		$info[ $fpacks ][ 'trans' ] += $ttrans;
 		$total[ 'xx_gets' ] += $tgets;
 		$total[ 'trans' ] += $ttrans;
 		continue;
 	}
 	if ( $key == 'xx_desc' ) {
-		$info[ $packs ][ 'xx_desc' ] = clean_names( $text );
+		$info[ $fpacks ][ 'xx_desc' ] = clean_names( $text );
 		continue;
 	}
 
-	$info[ $packs ][ $key ] = $text;
+	if ( !isset( $info[ $fpacks ][ $key ] ) ) {
+		$info[ $fpacks ][ $key ] = $text;
+	}
 
 	if ( $key == 'xx_trno' ) {
 		if ( !isset( $gruppen[ $gr ][ 'xx_trno' ] ) ) {
@@ -414,14 +426,17 @@ foreach ( $datalines as $key => $data) {
 		$gruppen[ $gr ][ 'xx_gets' ] = 0;
 		$gruppen[ $gr ][ 'trans' ] = 0;
 	}
-	$gruppen[ $gr ][ 'packs' ] ++;
-	$gruppen[ $gr ][ 'size' ] += $info[ $packs ][ 'size' ];
 	$gruppen[ $gr ][ 'xx_gets' ] += $tgets;
 	$gruppen[ $gr ][ 'trans' ] += $ttrans;
-	$gruppen[ '*' ][ 'packs' ] ++;
-	$gruppen[ '*' ][ 'size' ] += $info[ $packs ][ 'size' ];
 	$gruppen[ '*' ][ 'xx_gets' ] += $tgets;
 	$gruppen[ '*' ][ 'trans' ] += $ttrans;
+	if ( $newfile == 0 )
+		continue;
+
+	$gruppen[ $gr ][ 'packs' ] ++;
+	$gruppen[ $gr ][ 'size' ] += $info[ $fpacks ][ 'size' ];
+	$gruppen[ '*' ][ 'packs' ] ++;
+	$gruppen[ '*' ][ 'size' ] += $info[ $fpacks ][ 'size' ];
 }
 
 write_sizecache( $cache_file );
@@ -462,8 +477,8 @@ if ( isset( $_GET[ 'group' ] ) ) {
 ';
 
 	$gr = $_GET[ 'group' ];
-	$tpacks = $gruppen[ $gr ][ 'packs' ] / $servers;
-	$tsize = $gruppen[ $gr ][ 'size' ] / $servers;
+	$tpacks = $gruppen[ $gr ][ 'packs' ];
+	$tsize = $gruppen[ $gr ][ 'size' ];
 
 	echo '
 <tfoot>
@@ -574,8 +589,8 @@ if ( isset( $_GET[ 'group' ] ) ) {
 </thead>
 ';
 
-	$tpacks = $total[ 'packs' ] / $servers;
-	$tsize = $total[ 'size' ] / $servers;
+	$tpacks = $total[ 'packs' ];
+	$tsize = $total[ 'size' ];
 	$part = $total[ 'downl' ] - $total[ 'trans' ];
 	$tcount = count($gruppen) - 1;
 
@@ -608,8 +623,8 @@ if ( isset( $_GET[ 'group' ] ) ) {
 		if ( $key == '*' )
 			continue;
 
-		$tpacks= $gruppen[ $key ][ 'packs' ] / $servers;;
-		$asize = $gruppen[ $key ][ 'size' ] / $servers;
+		$tpacks= $gruppen[ $key ][ 'packs' ];
+		$asize = $gruppen[ $key ][ 'size' ];
 		$tsize = $gruppen[ $key ][ 'trans' ];
 		$tname = '';
 		if ( isset( $gruppen[ $key ][ 'xx_trno' ] ) )
