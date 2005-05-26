@@ -20,6 +20,7 @@ $filenames = array(
 );
 
 $cache_file = "size.data";
+$default_group = '.';
 
 $highlight_color = '#81A381';
 
@@ -129,7 +130,7 @@ function selectThis(src) {
     txtRange.execCommand("Copy");
     alert(txt + " wurde in die Zwischenablage kopiert");
 }
-//--!>
+-->
 </script>
 </head>
 <body>
@@ -363,6 +364,25 @@ function get_text( $string ) {
 	return substr( $string, 0, strlen( $string ) - 1 );
 }
 
+function update_group( $gr, $fpacks, $newfile, $tgets, $ttrans ) {
+	global $info;
+	global $gruppen;
+
+	$info[ $fpacks ][ 'xx_data' ] = $gr;
+	if ( !isset( $gruppen[ $gr ][ 'packs' ] ) ) {
+		$gruppen[ $gr ][ 'packs' ] = 0;
+		$gruppen[ $gr ][ 'size' ] = 0;
+		$gruppen[ $gr ][ 'xx_gets' ] = 0;
+		$gruppen[ $gr ][ 'trans' ] = 0;
+	}
+	$gruppen[ $gr ][ 'xx_gets' ] += $tgets;
+	$gruppen[ $gr ][ 'trans' ] += $ttrans;
+	if ( $newfile != 0 ) {
+		$gruppen[ $gr ][ 'packs' ] ++;
+		$gruppen[ $gr ][ 'size' ] += $info[ $fpacks ][ 'size' ];
+	}
+}
+
 read_sizecache( $cache_file );
 
 $support_groups = 0;
@@ -370,6 +390,7 @@ $nick2 = ereg_replace( "[^A-Za-z_0-9]", '', $nick );
 $packs = 0;
 $fpacks = 0;
 $newfile = 0;
+$nogroup = 0;
 $total[ 'packs' ] = 0;
 $total[ 'size' ] = 0;
 $total[ 'downl' ] = 0;
@@ -405,14 +426,6 @@ foreach ( $filenames as $key => $filename) {
 			break;
 		}
 		switch ($tag) {
-		case 256: # IROFFER_VERSION
-		case 257: # TIMESTAMP
-		case 512: # XFR_RECORD
-		case 513: # SENT_RECORD
-		case 515: # TOTAL_UPTIME
-		case 516: # LAST_LOGROTATE
-		case 2816: #
-			break;
 		case 514: # TOTAL_SENT
 			$text = substr( $filedata, $i + 8, $len - 8 );
 			$itotal = get_xlong( $text );
@@ -435,11 +448,10 @@ foreach ( $filenames as $key => $filename) {
 				case 0:
 					$j = $len;
 					break;
-				case 3077: # MINSPEED
-				case 3078: # MAXSPEED
-				case 3079: # MD5SUM_INFO
-					break;
 				case 3073: # FILE
+					if ( $nogroup != 0 )
+						update_group( $default_group, $fpacks, $newfile, $tgets, $ttrans );
+					$nogroup = 1;
 					$newfile = 0;
 					$packs ++;
 					$text = get_text( substr( $chunkdata, $j + 8, $jlen - 8 ) );
@@ -466,7 +478,6 @@ foreach ( $filenames as $key => $filename) {
 					$text = get_text( substr( $chunkdata, $j + 8, $jlen - 8 ) );
 					$info[ $fpacks ][ 'xx_desc' ] = clean_names( $text );
 					break;
-				case 3075: # NOTE
 				case 3076: # GETS
 					$text = substr( $chunkdata, $j + 8, $jlen - 8 );
 					$tgets = get_long( $text );
@@ -479,22 +490,11 @@ foreach ( $filenames as $key => $filename) {
 					$gruppen[ '*' ][ 'trans' ] += $ttrans;
 					break;
 				case 3080: # GROUP NAME
+					$nogroup = 0;
 					$support_groups = 1;
 					$text = get_text( substr( $chunkdata, $j + 8, $jlen - 8 ) );
-					$info[ $fpacks ][ 'xx_data' ] = $text;
 					$gr = $text;
-					if ( !isset( $gruppen[ $gr ][ 'packs' ] ) ) {
-						$gruppen[ $gr ][ 'packs' ] = 0;
-						$gruppen[ $gr ][ 'size' ] = 0;
-						$gruppen[ $gr ][ 'xx_gets' ] = 0;
-						$gruppen[ $gr ][ 'trans' ] = 0;
-					}
-					$gruppen[ $gr ][ 'xx_gets' ] += $tgets;
-					$gruppen[ $gr ][ 'trans' ] += $ttrans;
-					if ( $newfile == 0 )
-						break;
-					$gruppen[ $gr ][ 'packs' ] ++;
-					$gruppen[ $gr ][ 'size' ] += $info[ $packs ][ 'size' ];
+					update_group( $gr, $fpacks, $newfile, $tgets, $ttrans );
 					break;
 				case 3081: # GROUP DESC
 					if ( isset( $gruppen[ $gr ][ 'xx_trno' ] ) )
@@ -502,9 +502,6 @@ foreach ( $filenames as $key => $filename) {
 					$text = substr( $chunkdata, $j + 8, $jlen - 8 );
 					$gruppen[ $gr ][ 'xx_trno' ] = clean_names( $text );
 					break;
-				default:
-					printf( ":xtag=%d<br>", $jtag );
-					printf( ":xlen=%d<br>", $jlen );
 				}
 				$j += $jlen;
 				$r = $jlen % 4;
@@ -512,21 +509,6 @@ foreach ( $filenames as $key => $filename) {
 					$j += 4 - $r;
 			}
 			break;
-		case 3328: # TLIMIT_DAILY_USED
-		case 3329: # TLIMIT_DAILY_ENDS
-		case 3330: # TLIMIT_WEEKLY_USED
-		case 3331: # TLIMIT_WEEKLY_ENDS
-		case 3332: # TLIMIT_MONTHLY_USED
-		case 3333: # TLIMIT_MONTHLY_USED
-		case 3584: # QUEUE
-		case 3585: # QUEUE_PACK
-		case 3586: # QUEUE_NICK
-		case 3587: # QUEUE_HOST
-		case 3588: # QUEUE_TIME
-			break;
-		default:
-			printf( ":tag=%d<br>", $tag );
-			printf( ":len=%d<br>", $len );
 		}
 		$i += $len;
 		$r = $len % 4;
@@ -534,6 +516,8 @@ foreach ( $filenames as $key => $filename) {
 			$i += 4 - $r;
 	}
 }
+if ( ( $nogroup != 0 ) && ( $support_groups != 0 ) )
+	update_group( $default_group, $fpacks, $newfile, $tgets, $ttrans );
 
 write_sizecache( $cache_file );
 
