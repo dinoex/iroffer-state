@@ -47,7 +47,7 @@ $strip_in_names = array (
 ?>
 <html>
 <head>
-<meta name="generator" content="iroffer-state 1.2, iroffer.dinoex.net">
+<meta name="generator" content="iroffer-state 1.3, iroffer.dinoex.net">
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <meta http-equiv="content-language" content="de-de">
 <link rel="icon" href="/favicon.ico">
@@ -418,9 +418,9 @@ function read_status( $statefile ) {
 					break;
 				}
 			}
-			continue;
+			break;
 		}
-		break;
+		continue;
 	}
 }
 
