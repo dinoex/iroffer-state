@@ -47,7 +47,7 @@ $strip_in_names = array (
 ?>
 <html>
 <head>
-<meta name="generator" content="iroffer-state 1.3, iroffer.dinoex.net">
+<meta name="generator" content="iroffer-state 1.4, iroffer.dinoex.net">
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <meta http-equiv="content-language" content="de-de">
 <link rel="icon" href="/favicon.ico">
@@ -538,7 +538,7 @@ foreach ( $filenames as $key => $filename) {
 			break;
 		case 515: # TOTAL_UPTIME
 			$text = substr( $filedata, $i + 8, $len - 8 );
-			$itotal = get_xlong( $text );
+			$itotal = get_long( $text );
 			$total[ 'uptime' ] += $itotal;
 			break;
 		case 3072: # XDCCS
@@ -948,14 +948,36 @@ $label = '';
 foreach ( $traffic as $skey => $sdata) {
 	if ( !isset( $total[ $skey ] ) )
 		continue;
-	$label .= sprintf( "%6s %s\n", makesize($total[ $skey ]), $sdata );
+	$total[ $skey.'text' ] = makesize( $total[ $skey ] );
+	$label .= sprintf( "%6s %s\n", $total[ $skey.'text' ], $sdata );
 }
 echo '<td title="'.$label.'">'.$total[ 'version' ]."</td></tr>\n";
 
+function seconds_to_text( $sec ) {
+	$text = '';
+	$rest = $sec % 60;
+	$text .= $rest.' Sek.';
+	$mehr = floor( $sec / 60 );
+
+	$rest = $mehr % 60;
+	$text = $rest.' Min. '.$text;
+	$mehr = floor( $mehr / 60 );
+
+	$rest = $mehr % 24;
+	$text = $rest.' Std. '.$text;
+	$mehr = floor( $mehr / 24 );
+
+	$text = $mehr.' Tage '.$text;
+	return $text;
+}
+
+$total[ 'uptimetext' ] = seconds_to_text( $total[ 'uptime' ] );
+$total[ 'timetext' ] = strftime('%d.%m.%Y %H:%M', $total[ 'time' ] );
+
 $statistik = array (
 #	'version' => 'Version',
-#	'uptime' => 'Online',
-#	'time' => 'letztes Update',
+#	'uptimetext' => 'Online',
+#	'timetext' => 'letztes Update',
 	'freeslots' => 'Freie Slots',
 #	'maxslots' => 'Anzahl Slots',
 	'queue' => 'Warteschlange',
@@ -965,9 +987,9 @@ $statistik = array (
 #	'cap' => 'Maximale Bandbreite',
 #	'record' => 'Rekord-Rate',
 #	'send' => 'Rekord-Download',
-#	'daily' => "Traffic heute",
-#	'weekly' => "Traffic diese Woche",
-#	'monthly' => "Traffic diesem Monat",
+#	'dailytext' => "Traffic heute",
+#	'weeklytext' => "Traffic diese Woche",
+#	'monthlytext' => "Traffic diesem Monat",
 );
 
 foreach ( $statistik as $skey => $sdata) {
