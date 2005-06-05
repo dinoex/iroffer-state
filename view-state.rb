@@ -1,5 +1,5 @@
 #!/usr/local/bin/ruby -w
-#	$Id: view-state.rb,v 1.1 2005/05/26 15:17:06 dm Exp $
+#	$Id: view-state.rb,v 1.2 2005/06/05 08:34:27 dm Exp $
 #	(c) 2005, Dirk Meyer, Im Grund 4, 34317 Habichtswald
 #
 # Updates on:
@@ -179,16 +179,17 @@ $size_filename = "size.data"
 $size_cache_dirty = 0
 $size_cache = Hash.new(0)
 
-File.stat($size_filename).file? or usage('Size-file does not exist!', options)
-begin
-	File.open($size_filename, 'r').each_line { |line|
-		line.delete!( "\n" )
-		line.delete!( "\r" )
-		words = line.split( ':' )
-		$size_cache[ words[ 0 ] ] = words[ 1 ].to_i
-	}
-rescue
-	$stderr.print "Failure at #{$size_filename}: #{$!} => Skipping!\n"
+if ( FileTest.exist?($size_filename) )
+	begin
+		File.open($size_filename, 'r').each_line { |line|
+			line.delete!( "\n" )
+			line.delete!( "\r" )
+			words = line.split( ':' )
+			$size_cache[ words[ 0 ] ] = words[ 1 ].to_i
+		}
+	rescue
+		$stderr.print "Failure at #{$size_filename}: #{$!} => Skipping!\n"
+	end
 end
 
 $all_pack = 0
