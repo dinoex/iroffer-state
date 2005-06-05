@@ -36,8 +36,11 @@ def get_text(string)
 end
 
 def parse_buffer(buffer, bsize)
-	fsize = bsize - 16;
+	seen_group = Hash.new(0)
+	group = '';
+	fsize = bsize - 16
 	ipos = 8
+	final = 0
 	while ipos < fsize
 		tag = get_long( buffer[ipos, 4] )
 		len = get_long( buffer[ipos + 4, 4] )
@@ -66,22 +69,39 @@ def parse_buffer(buffer, bsize)
 				when 0
 					jpos = len
 				when 3073 # FILE
+					if ( final != 0 )
+						printf( "xx_trno %s\n", seen_group[ group ] )
+						printf( "\n" )
+					end
+					final = 1
 					text = chunkdata[jpos + 7, jlen - 8]
 					file = get_text( text )
 					printf( "xx_file %s\n", file )
-					desc = file
-					desc.gsub!( /^.*\//, '' )
+				when 3074 # DESC
+					text = chunkdata[jpos + 7, jlen - 8]
+					desc = get_text( text )
 					printf( "xx_desc %s\n", desc )
-					printf( "xx_note \n" )
+				when 3075 # NOTE
+					text = chunkdata[jpos + 7, jlen - 8]
+					note = get_text( text )
+					printf( "xx_note %s\n", note )
 				when 3076 # GETS
 					gets =  get_long( chunkdata[jpos + 8, 4 ] )
 					printf( "xx_gets %d\n",  gets )
 					printf( "xx_mins \n" )
 					printf( "xx_maxs \n" )
-					printf( "xx_data \n" )
+				when 3080 # GROUP NAME
+					text = chunkdata[jpos + 7, jlen - 8]
+					group = get_text( text )
+					printf( "xx_data %s\n", group )
 					printf( "xx_trig \n" )
-					printf( "xx_trno \n" )
+				when 3081 # GROUP DESC
+					text = chunkdata[jpos + 7, jlen - 8]
+					groupdesc = get_text( text )
+					printf( "xx_trno %s\n", groupdesc )
 					printf( "\n" )
+					seen_group[ group ] = groupdesc
+					final = 0
 				end
 				jpos += jlen
 				r = jlen % 4
@@ -95,6 +115,10 @@ def parse_buffer(buffer, bsize)
 		if ( r > 0 )
 			ipos += 4 - r;
 		end
+	end
+	if ( final != 0 )
+		printf( "xx_trno %s\n", seen_group[ group ] )
+		printf( "\n" )
 	end
 end
 
