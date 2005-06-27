@@ -802,7 +802,7 @@ href="'.make_self_order( 'rget' ).'">DLs/Pack</a>';
 href="'.make_self_order( 'size' ).'">GRÖSSE</a>';
 	$htvol = '<a class="head" title="sortieren nach Übertragusngsvolumen"
 href="'.make_self_order( 'tvol' ).'">Volumen</a>';
-	$hname = '<a class="head" title="sortieren nach Guppe"
+	$hname = '<a class="head" title="sortieren nach Gruppe"
 href="'.make_self_order( '' ).'">GRUPPE</a>';
 
 	if ( !isset( $_GET[ 'order' ] ) ) {
