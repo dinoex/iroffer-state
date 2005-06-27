@@ -47,7 +47,7 @@ $strip_in_names = array (
 ?>
 <html>
 <head>
-<meta name="generator" content="iroffer-state 1.4, iroffer.dinoex.net">
+<meta name="generator" content="iroffer-state 1.5, iroffer.dinoex.net">
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <meta http-equiv="content-language" content="de-de">
 <link rel="icon" href="/favicon.ico">
