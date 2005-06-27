@@ -142,7 +142,8 @@ function read_sizecache( $filename ) {
 		foreach ( $tlines as $ykey => $ydata) {
 			if ( ereg( '[:]', $ydata ) ) {
 				list( $key, $tsize ) = explode(':', $ydata, 2);
-				$sizecache[ $key ] = $tsize;
+				if ( $tsize > 0 )
+					$sizecache[ $key ] = $tsize;
 			}
 		}
 	}

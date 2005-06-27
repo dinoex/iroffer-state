@@ -1,5 +1,5 @@
 #!/usr/local/bin/ruby -w
-#	$Id: view-state.rb,v 1.2 2005/06/05 08:34:27 dm Exp $
+#	$Id: view-state.rb,v 1.3 2005/06/27 16:20:25 dm Exp $
 #	(c) 2005, Dirk Meyer, Im Grund 4, 34317 Habichtswald
 #
 # Updates on:
@@ -153,6 +153,13 @@ def parse_buffer(buffer, bsize)
 					$sum_xg_bytes += $xg_bytes
 					$all_xg_bytes += $xg_bytes
 					ausgabe()
+#				when 3080 # GROUP NAME
+#					text = chunkdata[jpos + 7, jlen - 8]
+#					group = get_text( text )
+#				when 3081 # GROUP DESC
+#					text = chunkdata[jpos + 7, jlen - 8]
+#					groupdesc = get_text( text )
+#					printf( "groupdesc %s %s\n", group, groupdesc )
 				end
 				jpos += jlen
 				r = jlen % 4
@@ -185,7 +192,10 @@ if ( FileTest.exist?($size_filename) )
 			line.delete!( "\n" )
 			line.delete!( "\r" )
 			words = line.split( ':' )
-			$size_cache[ words[ 0 ] ] = words[ 1 ].to_i
+			i = words[ 1 ].to_i
+			if ( i > 0 )
+				$size_cache[ words[ 0 ] ] = i
+			end
 		}
 	rescue
 		$stderr.print "Failure at #{$size_filename}: #{$!} => Skipping!\n"
