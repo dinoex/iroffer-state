@@ -153,6 +153,13 @@ def parse_buffer(buffer, bsize)
 					$sum_xg_bytes += $xg_bytes
 					$all_xg_bytes += $xg_bytes
 					ausgabe()
+#				when 3080 # GROUP NAME
+#					text = chunkdata[jpos + 7, jlen - 8]
+#					group = get_text( text )
+#				when 3081 # GROUP DESC
+#					text = chunkdata[jpos + 7, jlen - 8]
+#					groupdesc = get_text( text )
+#					printf( "groupdesc %s %s\n", group, groupdesc )
 				end
 				jpos += jlen
 				r = jlen % 4
@@ -185,7 +192,10 @@ if ( FileTest.exist?($size_filename) )
 			line.delete!( "\n" )
 			line.delete!( "\r" )
 			words = line.split( ':' )
-			$size_cache[ words[ 0 ] ] = words[ 1 ].to_i
+			i = words[ 1 ].to_i
+			if ( i > 0 )
+				$size_cache[ words[ 0 ] ] = i
+			end
 		}
 	rescue
 		$stderr.print "Failure at #{$size_filename}: #{$!} => Skipping!\n"
