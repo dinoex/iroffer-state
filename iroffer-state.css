@@ -77,3 +77,6 @@ span.hidden {
 visibility: hidden; 
 position: absolute;
 }
+span.cmd {
+font-weight: bold;
+}
