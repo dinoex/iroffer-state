@@ -1,7 +1,7 @@
 #!/bin/sh
 for name in "$@"
 do
-	sum=`cksum -o 3 "${name}" |
+	sum1=`cksum -o 3 "${name}" |
 	awk '{
 		CRC = $1
 		if ( CRC > 2^31 )
@@ -10,9 +10,18 @@ do
 		$2 = ""
 		print $1
 	}'`
-	neu="${name%.avi}[${sum}].avi"
-	neu=`echo ${neu} | sed -e "s= =_=g"`
-	echo \
-	mv -i "${name}" "${neu}"
-	mv -i "${name}" "${neu}"
+	sum2=`echo "${sum1}" | tr '[A-Z]' '[a-z]'`
+	case "${name}" in
+	*${sum1}*|*${sum2}*)
+		echo "crc ok: ${name}"
+		continue
+		;;
+	*)
+		neu="${name%.*}[${sum1}].${name##*.}"
+		neu=`echo ${neu} | sed -e "s= =_=g"`
+		echo \
+		mv -i "${name}" "${neu}"
+		mv -i "${name}" "${neu}"
+		;;
+	esac
 done
