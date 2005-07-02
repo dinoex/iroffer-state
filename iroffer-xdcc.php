@@ -444,7 +444,7 @@ write_sizecache( $cache_file );
 if ( isset( $_GET[ 'group' ] ) ) {
 	echo '<h1>'.$nick." Datei-Liste</h1>\n";
 	echo "\n";
-	echo '<p>Download im IRC mit "/msg '.$nick.' xdcc send #nummer"</p>';
+	echo '<p>Download im IRC mit <span class="cmd">/msg '.$nick.' xdcc send #nummer</span></p>';
 	echo "\n";
 } else {
 	echo '<h1>'.$nick." Gruppen-Liste</h1>\n";
