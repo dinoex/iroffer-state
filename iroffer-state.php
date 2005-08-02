@@ -22,6 +22,7 @@ $filenames = array(
 $cache_file = 'size.data';
 $default_group = '.neu';
 $base_path = './';
+$chroot_path = '';
 
 $javascript = 1;
 
@@ -47,7 +48,7 @@ $strip_in_names = array (
 ?>
 <html>
 <head>
-<meta name="generator" content="iroffer-state 1.5, iroffer.dinoex.net">
+<meta name="generator" content="iroffer-state 1.6, iroffer.dinoex.net">
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <meta http-equiv="content-language" content="de-de">
 <link rel="icon" href="/favicon.ico">
@@ -168,6 +169,7 @@ function filesize_cache( $filename ) {
 	global $sizecache;
 	global $sizecache_dirty;
 	global $base_path;
+	global $chroot_path;
 
 	if ( isset( $sizecache[ $filename ] ) ) {
 		return $sizecache[ $filename ];
@@ -175,6 +177,8 @@ function filesize_cache( $filename ) {
 	$localfile = $filename;
 	if ( !ereg( '^/', $filename ) )
 		$localfile = $base_path.$filename;
+	if ( $chroot_path != '' )
+		$localfile = $chroot_path.$localfile;
 	$tsize = filesize( $localfile );
 	$sizecache[ $filename ] = $tsize;
 	$sizecache_dirty ++;
