@@ -1,20 +1,14 @@
 #!/usr/local/bin/ruby -w
-#	$Id: view-state.rb,v 1.3 2005/06/27 16:20:25 dm Exp $
+#	$Id: view-state.rb,v 1.4 2005/08/02 11:26:44 dm Exp $
 #	(c) 2005, Dirk Meyer, Im Grund 4, 34317 Habichtswald
 #
 # Updates on:
 #	http://anime.dinoex.net/xdcc/tools/
 #
 
-require 'getoptlong'
-
-def usage(msg, options)
+def usage(msg)
 	print msg, "\nUsage: #{File.basename($0)} statefile [statefile ...]\n\n"
 	print msg, "export iroffer statefile to text.\n"
-	options.each { |o|
-		print "  " + o[1] + ", " + o[0] + " " +
-			(o[2] == GetoptLong::REQUIRED_ARGUMENT ? 'ARGUMENT' : '') + "\n"
-	}
 	exit 64
 end
 
@@ -262,7 +256,7 @@ if ARGV.size > 0 then
 		end
 	}
 else
-	usage('State-file not given!', options)
+	usage('State-file not given!')
 end
 
 if ( $sum_bytes != $all_bytes )
