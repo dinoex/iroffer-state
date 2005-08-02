@@ -1,10 +1,12 @@
 #!/usr/local/bin/ruby -w
-#	$Id: view-state.rb,v 1.4 2005/08/02 11:26:44 dm Exp $
+#	$Id: view-state.rb,v 1.5 2005/08/02 11:39:20 dm Exp $
 #	(c) 2005, Dirk Meyer, Im Grund 4, 34317 Habichtswald
 #
 # Updates on:
 #	http://anime.dinoex.net/xdcc/tools/
 #
+
+$chroot = ""
 
 def usage(msg)
 	print msg, "\nUsage: #{File.basename($0)} statefile [statefile ...]\n\n"
@@ -16,7 +18,7 @@ def filesize_cache(key)
 	if  ( $size_cache.has_key?( key ) )
 		return $size_cache[ key ]
 	end
-	bytes = File.size(key)
+	bytes = File.size( "#{chroot}#{key}")
 	$size_cache[ key ] = bytes
 	$size_cache_dirty += 1
 	return bytes
