@@ -6,6 +6,8 @@
 #	http://anime.dinoex.net/xdcc/tools/
 #
 
+$chroot = ""
+
 def usage(msg)
 	print msg, "\nUsage: #{File.basename($0)} statefile [statefile ...]\n\n"
 	print msg, "export iroffer statefile to text.\n"
@@ -16,7 +18,7 @@ def filesize_cache(key)
 	if  ( $size_cache.has_key?( key ) )
 		return $size_cache[ key ]
 	end
-	bytes = File.size(key)
+	bytes = File.size( "#{chroot}#{key}")
 	$size_cache[ key ] = bytes
 	$size_cache_dirty += 1
 	return bytes
