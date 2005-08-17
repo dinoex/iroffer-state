@@ -48,7 +48,7 @@ $strip_in_names = array (
 ?>
 <html>
 <head>
-<meta name="generator" content="iroffer-state 1.7, iroffer.dinoex.net">
+<meta name="generator" content="iroffer-state 1.8, iroffer.dinoex.net">
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <meta http-equiv="content-language" content="de-de">
 <link rel="icon" href="/favicon.ico">
@@ -453,10 +453,13 @@ function get_text( $string ) {
 	return substr( $string, 0, strlen( $string ) - 1 );
 }
 
-function update_group( $gr, $fpacks, $newfile, $tgets, $fsize ) {
+function update_group( $gr, $fpacks, $newfile, $tgets, $fsize, $fname ) {
 	global $info;
 	global $gruppen;
 	global $total;
+
+	if ( $fsize <= 0 )
+		$fsize = filesize_cache( $fname );
 
 	$ttrans = $fsize * $tgets;
 	$total[ 'xx_gets' ] += $tgets;
@@ -504,6 +507,7 @@ $gruppen[ '*' ][ 'packs' ] = 0;
 $gruppen[ '*' ][ 'size' ] = 0;
 $gruppen[ '*' ][ 'xx_gets' ] = 0;
 $gruppen[ '*' ][ 'trans' ] = 0;
+$fname = '';
 
 # Status aller Bots lesen
 foreach ( $filenames as $key => $filename) {
@@ -577,19 +581,20 @@ foreach ( $filenames as $key => $filename) {
 					break;
 				case 3073: # FILE
 					if ( $nogroup != 0 )
-						update_group( $default_group, $fpacks, $newfile, $tgets, $fsize );
+						update_group( $default_group, $fpacks, $newfile, $tgets, $fsize, $fname );
 					$nogroup = 1;
 					$newfile = 0;
+					$fsize = 0;
 					$packs ++;
 					$text = get_text( substr( $chunkdata, $j + 8, $jlen - 8 ) );
-					$fsize = filesize_cache( $text );
-					if ( !isset( $seen[ $text ] ) ) {
+					$fname = $text;
+					if ( !isset( $seen[ $fname ] ) ) {
 						$newfile = 1;
-						$seen[ $text ] = $packs;
+						$seen[ $fname ] = $packs;
 						$total[ 'packs' ] ++;
 						$gruppen[ '*' ][ 'packs' ] ++;
 					}
-					$fpacks = $seen[ $text ];
+					$fpacks = $seen[ $fname ];
 					$info[ $fpacks ][ 'pack' ] = $fpacks;
 					if ( !isset( $info[ $fpacks ][ 'xx_gets' ] ) ) {
 						$info[ $fpacks ][ 'xx_gets' ] = 0;
@@ -618,7 +623,7 @@ foreach ( $filenames as $key => $filename) {
 				case 3079: # MD5SUM_INFO
 					$tmp6 = get_xlong( substr( $chunkdata, $j + 8, 8 ) );
 					if ( $tmp6 > 0 )
-						$fsize = $tmp6;
+					$fsize = $tmp6;
 					$tmd5a = get_long( substr( $chunkdata, $j + 36, 4 ) );
 					$tmd5b = get_long( substr( $chunkdata, $j + 40, 4 ) );
 					$tmd5c = get_long( substr( $chunkdata, $j + 44, 4 ) );
@@ -632,7 +637,7 @@ foreach ( $filenames as $key => $filename) {
 					$support_groups = 1;
 					$text = get_text( substr( $chunkdata, $j + 8, $jlen - 8 ) );
 					$gr = $text;
-					update_group( $gr, $fpacks, $newfile, $tgets, $fsize );
+					update_group( $gr, $fpacks, $newfile, $tgets, $fsize, $fname );
 					break;
 				case 3081: # GROUP DESC
 					if ( isset( $gruppen[ $gr ][ 'xx_trno' ] ) )
@@ -673,7 +678,7 @@ foreach ( $filenames as $key => $filename) {
 	}
 }
 if ( ( $nogroup != 0 ) && ( $support_groups != 0 ) )
-	update_group( $default_group, $fpacks, $newfile, $tgets, $fsize );
+	update_group( $default_group, $fpacks, $newfile, $tgets, $fsize, $fname );
 
 write_sizecache( $cache_file );
 
