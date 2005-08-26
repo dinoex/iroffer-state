@@ -5,26 +5,35 @@
 #	dirk.meyer@dinoex.sub.org
 #
 # Updates on:
-#	http://anime.dinoex.net/xdcc/tools/
+#	http://iroffer.dinoex.net/
 #
 
+#
+# Konfigurtaion:
+#
 # IRC-Nick des Bots
+#
+# 1) Name des Verzeichnissses ist der Nick
 $nick = ereg_replace( '/[^/]*[.]php$', '', $_SERVER[ 'PHP_SELF' ] );
 $nick = ereg_replace( '^/(.*/)*', '', $nick );
-#$nick = 'XDCC|'.$nick;
+$nick = 'XDCC|'.$nick;
+# 2) Nick wird fest eingetragen:
 #$nick = 'XDCC|irofferbot';
 
-# Statusfiles der bots
+# Statusfiles des bots hier angeben
 $filenames = array(
 	'mybot.state',
 );
+
+# COPY+PASTE per Javascript aktiv=1, inaktiv=0
+$javascript = 1;
+
+# Ende der Einstellungen
 
 $cache_file = 'size.data';
 $default_group = '.neu';
 $base_path = './';
 $chroot_path = '';
-
-$javascript = 1;
 
 $strip_in_names = array (
 	'^ *- *',
