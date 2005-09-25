@@ -507,6 +507,7 @@ function update_group( $gr, $fpacks, $newfile, $tgets, $fsize, $fname ) {
 function read_state( )
 {
 	global $cache_file;
+	global $default_group;
 
 	$this->support_groups = 0;
 	$this->total[ 'packs' ] = 0;
