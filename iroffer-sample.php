@@ -37,7 +37,7 @@ $default_group = '.neu';
 $base_path = './';
 $chroot_path = '';
 
-# Welche Daten sollen angezeight werden?
+# Welche Daten sollen angezeigt werden?
 $statistik = array (
 #	'version' => 'Version',
 #	'uptimetext' => 'Online',
