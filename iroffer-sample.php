@@ -82,6 +82,7 @@ $bot->filenames = $filenames;
 $bot->base_path = $base_path;
 $bot->chroot_path = $chroot_path;
 $bot->statistik = $statistik;
+# $bot->add_url = 'debug=1';
 
 $bot->read_state();
 $bot->write_table();

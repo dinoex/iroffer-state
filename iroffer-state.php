@@ -163,122 +163,6 @@ function cgi_escape( $string ) {
 	return $string;
 }
 
-function make_self_more() {
-	$par = 0;
-	$link = $_SERVER[ 'PHP_SELF' ];
-	# options:
-	if ( isset( $_GET[ 'group' ] ) ) {
-		if ( $par == 0 )
-			$link .= '?';
-		else
-			$link .= '&amp;';
-		$link .= 'group='.cgi_escape($_GET[ 'group' ]);
-		$par ++;
-	}
-	if ( !isset( $_GET[ 'volumen' ] ) ) {
-		if ( $par == 0 )
-			$link .= '?';
-		else
-			$link .= '&amp;';
-		$link .= 'volumen=1';
-		$par ++;
-	}
-	if ( isset( $_GET[ 'order' ] ) ) {
-		if ( $par == 0 )
-			$link .= '?';
-		else
-			$link .= '&amp;';
-		$link .= 'order='.$_GET[ 'order' ];
-		$par ++;
-	}
-	return $link;
-}
-
-function make_self_order( $order ) {
-	$par = 0;
-	$link = $_SERVER[ 'PHP_SELF' ];
-	# options:
-	if ( isset( $_GET[ 'group' ] ) ) {
-		if ( $par == 0 )
-			$link .= '?';
-		else
-			$link .= '&amp;';
-		$link .= 'group='.cgi_escape($_GET[ 'group' ]);
-		$par ++;
-	}
-	if ( isset( $_GET[ 'volumen' ] ) ) {
-		if ( $par == 0 )
-			$link .= '?';
-		else
-			$link .= '&amp;';
-		$link .= 'volumen='.$_GET[ 'volumen' ];
-		$par ++;
-	}
-	if ( $order != '' ) {
-		if ( $par == 0 )
-			$link .= '?';
-		else
-			$link .= '&amp;';
-		$link .= 'order='.$order;
-		$par ++;
-	}
-	return $link;
-}
-
-function make_self_group( $group ) {
-	$par = 0;
-	$link = $_SERVER[ 'PHP_SELF' ];
-	# options:
-	if ( $group != '' ) {
-		if ( $par == 0 )
-			$link .= '?';
-		else
-			$link .= '&amp;';
-		$link .= 'group='.cgi_escape($group);
-		$par ++;
-	}
-	if ( isset( $_GET[ 'volumen' ] ) ) {
-		if ( $par == 0 )
-			$link .= '?';
-		else
-			$link .= '&amp;';
-		$link .= 'volumen='.$_GET[ 'volumen' ];
-		$par ++;
-	}
-	if ( isset( $_GET[ 'order' ] ) ) {
-		if ( $par == 0 )
-			$link .= '?';
-		else
-			$link .= '&amp;';
-		$link .= 'order='.$_GET[ 'order' ];
-		$par ++;
-	}
-	return $link;
-}
-
-function make_self_back( $order ) {
-	$par = 0;
-	$link = $_SERVER[ 'PHP_SELF' ];
-	# options:
-	if ( isset( $_GET[ 'volumen' ] ) ) {
-		if ( $par == 0 )
-			$link .= '?';
-		else
-			$link .= '&amp;';
-		$link .= 'volumen='.$_GET[ 'volumen' ];
-		$par ++;
-	}
-	if ( isset( $_GET[ 'order' ] ) ) {
-		if ( $par == 0 )
-			$link .= '?';
-		else
-			$link .= '&amp;';
-		$link .= 'order='.$_GET[ 'order' ];
-		$par ++;
-	}
-	return $link;
-}
-
 function get_long( $string ) {
 	$l = ord( substr( $string, 0, 1 ) );
 	$l = $l * 256;
@@ -326,6 +210,7 @@ class iroffer_botlist {
 	var $base_path;
 	var $chroot_path;
 	var $statistik;
+	var $add_url;
 # output
 	var $total;
 	var $gruppen;
@@ -333,6 +218,142 @@ class iroffer_botlist {
 	var $support_groups;
 # internal
 	var $seen;
+
+function make_self_more() {
+	$par = 0;
+	$link = $_SERVER[ 'PHP_SELF' ];
+	if ( $this->add_url != '' ) {
+		$link .= '?';
+		$link .= $this->add_url;
+		$par ++;
+	}
+	# options:
+	if ( isset( $_GET[ 'group' ] ) ) {
+		if ( $par == 0 )
+			$link .= '?';
+		else
+			$link .= '&amp;';
+		$link .= 'group='.cgi_escape($_GET[ 'group' ]);
+		$par ++;
+	}
+	if ( !isset( $_GET[ 'volumen' ] ) ) {
+		if ( $par == 0 )
+			$link .= '?';
+		else
+			$link .= '&amp;';
+		$link .= 'volumen=1';
+		$par ++;
+	}
+	if ( isset( $_GET[ 'order' ] ) ) {
+		if ( $par == 0 )
+			$link .= '?';
+		else
+			$link .= '&amp;';
+		$link .= 'order='.$_GET[ 'order' ];
+		$par ++;
+	}
+	return $link;
+}
+
+function make_self_order( $order ) {
+	$par = 0;
+	$link = $_SERVER[ 'PHP_SELF' ];
+	if ( $this->add_url != '' ) {
+		$link .= '?';
+		$link .= $this->add_url;
+		$par ++;
+	}
+	# options:
+	if ( isset( $_GET[ 'group' ] ) ) {
+		if ( $par == 0 )
+			$link .= '?';
+		else
+			$link .= '&amp;';
+		$link .= 'group='.cgi_escape($_GET[ 'group' ]);
+		$par ++;
+	}
+	if ( isset( $_GET[ 'volumen' ] ) ) {
+		if ( $par == 0 )
+			$link .= '?';
+		else
+			$link .= '&amp;';
+		$link .= 'volumen='.$_GET[ 'volumen' ];
+		$par ++;
+	}
+	if ( $order != '' ) {
+		if ( $par == 0 )
+			$link .= '?';
+		else
+			$link .= '&amp;';
+		$link .= 'order='.$order;
+		$par ++;
+	}
+	return $link;
+}
+
+function make_self_group( $group ) {
+	$par = 0;
+	$link = $_SERVER[ 'PHP_SELF' ];
+	if ( $this->add_url != '' ) {
+		$link .= '?';
+		$link .= $this->add_url;
+		$par ++;
+	}
+	# options:
+	if ( $group != '' ) {
+		if ( $par == 0 )
+			$link .= '?';
+		else
+			$link .= '&amp;';
+		$link .= 'group='.cgi_escape($group);
+		$par ++;
+	}
+	if ( isset( $_GET[ 'volumen' ] ) ) {
+		if ( $par == 0 )
+			$link .= '?';
+		else
+			$link .= '&amp;';
+		$link .= 'volumen='.$_GET[ 'volumen' ];
+		$par ++;
+	}
+	if ( isset( $_GET[ 'order' ] ) ) {
+		if ( $par == 0 )
+			$link .= '?';
+		else
+			$link .= '&amp;';
+		$link .= 'order='.$_GET[ 'order' ];
+		$par ++;
+	}
+	return $link;
+}
+
+function make_self_back( $order ) {
+	$par = 0;
+	$link = $_SERVER[ 'PHP_SELF' ];
+	if ( $this->add_url != '' ) {
+		$link .= '?';
+		$link .= $this->add_url;
+		$par ++;
+	}
+	# options:
+	if ( isset( $_GET[ 'volumen' ] ) ) {
+		if ( $par == 0 )
+			$link .= '?';
+		else
+			$link .= '&amp;';
+		$link .= 'volumen='.$_GET[ 'volumen' ];
+		$par ++;
+	}
+	if ( isset( $_GET[ 'order' ] ) ) {
+		if ( $par == 0 )
+			$link .= '?';
+		else
+			$link .= '&amp;';
+		$link .= 'order='.$_GET[ 'order' ];
+		$par ++;
+	}
+	return $link;
+}
 
 function read_removed( $statefile ) {
 
@@ -711,11 +732,11 @@ function write_table( )
 ';
 	if ( isset( $_GET[ 'group' ] ) ) {
 		$hpack = '<a class="head" title="sortieren nach Pack-Nr."
-href="'.make_self_order( '' ).'">PACK</a>';
+href="'.$this->make_self_order( '' ).'">PACK</a>';
 		$hgets = '<a class="head" title="sortieren nach Anzahl Downloads"
-href="'.make_self_order( 'gets' ).'">DLs</a>';
+href="'.$this->make_self_order( 'gets' ).'">DLs</a>';
 		$hsize = '<a class="head" title="sortieren nach Göße der Files"
-href="'.make_self_order( 'size' ).'">GRÖSSE</a>';
+href="'.$this->make_self_order( 'size' ).'">GRÖSSE</a>';
 
 		if ( !isset( $_GET[ 'order' ] ) ) {
 			foreach ( $this->info as $key => $data)
@@ -745,7 +766,7 @@ href="'.make_self_order( 'size' ).'">GRÖSSE</a>';
 				$hpack = 'PACK';
 			}
 		}
-		$linkmore = '&nbsp;<a title="zurück" href="'.make_self_back( '' ).'">(zurück)</a>';
+		$linkmore = '&nbsp;<a title="zurück" href="'.$this->make_self_back( '' ).'">(zurück)</a>';
 
 		echo '
 <tr>
@@ -813,17 +834,17 @@ href="'.make_self_order( 'size' ).'">GRÖSSE</a>';
 
 	} else {
 		$hpack = '<a class="head" title="sortieren nach Pack-Nr."
-href="'.make_self_order( 'pack' ).'">PACKs</a>';
+href="'.$this->make_self_order( 'pack' ).'">PACKs</a>';
 		$hgets = '<a class="head" title="sortieren nach Anzahl Downloads"
-href="'.make_self_order( 'gets' ).'">DLs</a>';
+href="'.$this->make_self_order( 'gets' ).'">DLs</a>';
 		$hrget = '<a class="head" title="sortieren nach Downloads per Datei"
-href="'.make_self_order( 'rget' ).'">DLs/Pack</a>';
+href="'.$this->make_self_order( 'rget' ).'">DLs/Pack</a>';
 		$hsize = '<a class="head" title="sortieren nach Göße der Files"
-href="'.make_self_order( 'size' ).'">GRÖSSE</a>';
+href="'.$this->make_self_order( 'size' ).'">GRÖSSE</a>';
 		$htvol = '<a class="head" title="sortieren nach Übertragusngsvolumen"
-href="'.make_self_order( 'tvol' ).'">Volumen</a>';
+href="'.$this->make_self_order( 'tvol' ).'">Volumen</a>';
 		$hname = '<a class="head" title="sortieren nach Gruppe"
-href="'.make_self_order( '' ).'">GRUPPE</a>';
+href="'.$this->make_self_order( '' ).'">GRUPPE</a>';
 
 		if ( !isset( $_GET[ 'order' ] ) ) {
 			foreach ( $this->gruppen as $key => $data)
@@ -868,9 +889,9 @@ href="'.make_self_order( '' ).'">GRUPPE</a>';
 		if ( isset( $_GET[ 'volumen' ] ) ) {
 			$tvol1 = '<th class="head">'.$htvol.'</th>';
 			$rget1 = '<th class="head">'.$hrget.'</th>';
-			$linkmore = '&nbsp;<a title="Volumen ausblenden" href="'.make_self_more().'">(weniger)</a>';
+			$linkmore = '&nbsp;<a title="Volumen ausblenden" href="'.$this->make_self_more().'">(weniger)</a>';
 		} else {
-			$linkmore = '&nbsp;<a title="Volumen anzeigen" href="'.make_self_more().'">(mehr)</a>';
+			$linkmore = '&nbsp;<a title="Volumen anzeigen" href="'.$this->make_self_more().'">(mehr)</a>';
 		}
 
 		echo '
@@ -908,7 +929,7 @@ href="'.make_self_order( '' ).'">GRUPPE</a>';
 <th class="right">'.makesize($tsize).'</th>
 '.$tvol2.'
 <th class="head">'.$tcount.'</th>
-<th class="head"><a title="alle Packs in einer Liste anzeigen" href="'.make_self_group( '*' ).'">alle Packs</a> ['.makesize($this->total[ 'trans' ]).'] vollständig heruntergeladen, ['.makesize($part).']&nbsp;unvollständig</th>
+<th class="head"><a title="alle Packs in einer Liste anzeigen" href="'.$this->make_self_group( '*' ).'">alle Packs</a> ['.makesize($this->total[ 'trans' ]).'] vollständig heruntergeladen, ['.makesize($part).']&nbsp;unvollständig</th>
 </tr>
 </tfoot>
 <tbody>
@@ -926,7 +947,7 @@ href="'.make_self_order( '' ).'">GRUPPE</a>';
 			$tname = $key;
 			if ( isset( $this->gruppen[ $key ][ 'xx_trno' ] ) )
 				$tname = $this->gruppen[ $key ][ 'xx_trno' ];
-			$link = make_self_group( $key );
+			$link = $this->make_self_group( $key );
 
 			$tvol3 = '';
 			$rget3 = '';
