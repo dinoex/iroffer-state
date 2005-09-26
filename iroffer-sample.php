@@ -28,6 +28,9 @@ $filenames = array(
 # COPY+PASTE per Javascript aktiv=1, inaktiv=0
 $javascript = 1;
 
+# Begrenze die Länder der Dateinamen auf n Zeichen, 0=alle ausgeben
+$max_filename_len = 0;
+
 # Pfad zu einer Cache datei, Bitte leere Datei anlegen.
 $cache_file = 'size.data';
 

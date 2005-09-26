@@ -8,7 +8,7 @@
 #
 
 $meta_generator = '
-<meta name="generator" content="iroffer-state 2.0, iroffer.dinoex.net">
+<meta name="generator" content="iroffer-state 2.1, iroffer.dinoex.net">
 ';
 
 # IRC-Farbe-Codes ausblenden
@@ -201,6 +201,14 @@ function seconds_to_text( $sec ) {
 
 	$text = $mehr.' Tage '.$text;
 	return $text;
+}
+
+function max_name_len( $string, $limit ) {
+	if ( strlen( $string ) < $limit ) {
+		return $string;
+	} else {
+		return substr($string, 0, ($limit - 4)).'...';
+	}
 }
 
 class iroffer_botlist {
@@ -508,6 +516,7 @@ function read_state( )
 {
 	global $cache_file;
 	global $default_group;
+	global $max_filename_len;
 
 	$this->support_groups = 0;
 	$this->total[ 'packs' ] = 0;
@@ -628,7 +637,10 @@ function read_state( )
 						if ( isset( $this->info[ $fpacks ][ 'xx_desc' ] ) )
 							break;
 						$text = get_text( substr( $chunkdata, $j + 8, $jlen - 8 ) );
-						$this->info[ $fpacks ][ 'xx_desc' ] = clean_names( $text );
+						$text = clean_names( $text );
+						if ( $max_filename_len > 0 )
+							$text = max_name_len( $text, $max_filename_len );
+						$this->info[ $fpacks ][ 'xx_desc' ] = $text;
 						break;
 					case 3075: # NOTE
 						if ( isset( $this->info[ $fpacks ][ 'xx_note' ] ) )
