@@ -1,4 +1,3 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <?php
 #
 # Copyright 2004 Dirk Meyer, Im Grund 4, 34317 Habichstwald
@@ -7,6 +6,7 @@
 # Updates on:
 #	http://iroffer.dinoex.net/
 #
+ob_start('ob_gzhandler');
 
 #
 # Konfigurtaion:
@@ -61,6 +61,7 @@ $statistik = array (
 include 'iroffer-state.php';
 
 ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <?php echo $meta_generator; ?>
@@ -75,7 +76,7 @@ include 'iroffer-state.php';
 <center>
 <?php
 
-$bot = new botlist();
+$bot = new iroffer_botlist();
 $bot->nick = $nick;
 
 $bot->filenames = $filenames;
