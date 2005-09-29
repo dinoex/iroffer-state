@@ -8,7 +8,7 @@
 #
 
 $meta_generator = '
-<meta name="generator" content="iroffer-state 2.1, iroffer.dinoex.net">
+<meta name="generator" content="iroffer-state 2.2, iroffer.dinoex.net">
 ';
 
 # IRC-Farbe-Codes ausblenden
@@ -613,7 +613,7 @@ function read_state( )
 						break;
 					case 3073: # FILE
 						if ( $nogroup != 0 )
-							update_group( $default_group, $fpacks, $newfile, $tgets, $fsize, $fname );
+							$this->update_group( $default_group, $fpacks, $newfile, $tgets, $fsize, $fname );
 						$nogroup = 1;
 						$newfile = 0;
 						$fsize = 0;
@@ -713,7 +713,7 @@ function read_state( )
 		}
 	}
 	if ( ( $nogroup != 0 ) && ( $this->support_groups != 0 ) )
-		update_group( $default_group, $fpacks, $newfile, $tgets, $fsize, $fname );
+		$this->update_group( $default_group, $fpacks, $newfile, $tgets, $fsize, $fname );
 
 	write_sizecache( $cache_file );
 
