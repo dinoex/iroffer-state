@@ -37,7 +37,13 @@ $cache_file = 'size.data';
 # Unter welchen Namen solle Packs ohne Gruppe angezeigt werden.
 $default_group = '.neu';
 
+# Setze dies auf 1, dann werden gesperrte Packs nicht gelistet.
+$hide_locked = 0;
+
+# Pfad "files_dir" in der iroffer config.
 $base_path = './';
+
+# Pfad wenn der bot mit chroot rennt.
 $chroot_path = '';
 
 # Welche Daten sollen angezeigt werden?
@@ -86,6 +92,7 @@ $bot->filenames = $filenames;
 $bot->base_path = $base_path;
 $bot->chroot_path = $chroot_path;
 $bot->statistik = $statistik;
+$bot->hide_locked = $hide_locked;
 # $bot->add_url = 'debug=1';
 
 $bot->read_state();
