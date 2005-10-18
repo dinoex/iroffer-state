@@ -8,7 +8,7 @@
 #
 
 $meta_generator = '
-<meta name="generator" content="iroffer-state 2.2, iroffer.dinoex.net">
+<meta name="generator" content="iroffer-state 2.3, iroffer.dinoex.net">
 ';
 
 # IRC-Farbe-Codes ausblenden
@@ -218,6 +218,7 @@ class iroffer_botlist {
 	var $base_path;
 	var $chroot_path;
 	var $statistik;
+	var $hide_locked;
 	var $add_url;
 # output
 	var $total;
@@ -818,8 +819,11 @@ href="'.$this->make_self_order( 'size' ).'">GRÖSSE</a>';
 			$tname = $this->info[ $key ][ 'xx_desc' ];
 			$jsid= $nick2.'_'.$tpack;
 
-			if ( isset( $this->info[ $key ][ 'xx_lock' ] ) )
+			if ( isset( $this->info[ $key ][ 'xx_lock' ] ) ) {
+				if ( $this->hide_locked > 0 )
+					continue;
 				$tname .= ' (gesperrt)';
+			}
 			$tname = htmlspecialchars( $tname);
 			if ( $javascript > 0 ) {
 				$tname = '<span class="selectable" onclick=javascript:selectThis(\''.
