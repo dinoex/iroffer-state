@@ -519,6 +519,7 @@ function read_state( )
 	global $default_group;
 	global $max_filename_len;
 
+	$this->info = array();
 	$this->support_groups = 0;
 	$this->total[ 'packs' ] = 0;
 	$this->total[ 'size' ] = 0;
@@ -724,6 +725,7 @@ function write_table( )
 {
 	global $javascript;
 
+	$ausgabe = array();
 	$nick2 = ereg_replace( '[^A-Za-z_0-9]', '', $this->nick );
 
 	if ( $this->support_groups == 0 )
