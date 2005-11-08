@@ -8,7 +8,7 @@
 #
 
 $meta_generator = '
-<meta name="generator" content="iroffer-state 2.3, iroffer.dinoex.net">
+<meta name="generator" content="iroffer-state 2.4, iroffer.dinoex.net">
 ';
 
 # IRC-Farbe-Codes ausblenden
@@ -31,6 +31,73 @@ $strip_in_names = array (
 	"\017",
 );
 
+$headers = getallheaders();
+if ( strstr( $headers[ 'Accept-Language' ], 'de' ) ) {
+	$caption = array(
+		'id' => 'de',
+		'listf' => 'Datei-Liste',
+		'listg' => 'Gruppen-Liste',
+		'source' => 'Quellecode',
+		'download' => 'Download im IRC mit',
+		'paste' => 'wurde in die Zwischenablage kopiert',
+		'pack' => 'PACKs',
+		'gets' => 'DLs',
+		'rget' => 'DLs/Pack',
+		'size' => 'GRÖSSE',
+		'tvol' => 'Volumen',
+		'group' => 'GRUPPE',
+		'desc' => 'BESCHREIBUNG',
+		'sortpack' => 'sortieren nach Pack-Nr.',
+		'sortgets' => 'sortieren nach Anzahl Downloads',
+		'sortrget' => 'sortieren nach Downloads per Datei',
+		'sortsize' => 'sortieren nach nach Göße der Files',
+		'sorttvol' => 'sortieren nach Übertragusngsvolumen',
+		'sortgroup' => 'sortieren nach Gruppe',
+		'back' => 'zurück',
+		'titlemore' => 'Volumen anzeigen',
+		'more' => 'mehr',
+		'titleless' => 'Volumen ausblenden',
+		'less' => 'weniger',
+		'titleall' => 'alle Packs in einer Liste anzeigen',
+		'all' => 'alle Packs',
+		'complete' => 'vollständig heruntergeladen',
+		'uncomplete' => 'unvollständig',
+		'titlegroup' => 'Liste dieser Packs anzeigen',
+        );
+} else {
+	$caption = array(
+		'id' => 'en',
+		'listf' => 'File list',
+		'listg' => 'Group list',
+		'source' => 'Sourcecode',
+		'download' => 'Download in IRC with',
+		'paste' => 'has been copied in your clipboard',
+		'pack' => 'PACKs',
+		'gets' => 'DLs',
+		'rget' => 'DLs/Pack',
+		'size' => 'Size',
+		'tvol' => 'Traffic',
+		'group' => 'GROUP',
+		'desc' => 'DESCRIPTION',
+		'sortpack' => 'sort by pack-Nr.',
+		'sortgets' => 'sort by downloads',
+		'sortrget' => 'sort by downloads per file',
+		'sortsize' => 'sort by size of file',
+		'sorttvol' => 'sort by traffic',
+		'sortgroup' => 'sort by group',
+		'back' => 'back',
+		'titlemore' => 'show traffic',
+		'more' => 'more',
+		'titleless' => 'hide traffic',
+		'less' => 'less',
+		'titleall' => 'show all packs in one list',
+		'all' => 'all packs',
+		'complete' => 'complete downloaded',
+		'uncomplete' => 'uncomplete',
+		'titlegroup' => 'show list of packs',
+        );
+}
+
 $javascript_code = '';
 if ( $javascript > 0 ) {
 	$javascript_code = '
@@ -45,7 +112,7 @@ function selectThis(src) {
     txtRange.select();
     txtRange.execCommand("RemoveFormat");
     txtRange.execCommand("Copy");
-    alert(txt + " wurde in die Zwischenablage kopiert");
+    alert(txt + " '.$caption[ 'paste' ].'");
 }
 -->
 </script>
@@ -605,14 +672,10 @@ function read_state( )
 					if ( $jlen <= 8 ) {
 						printf( ':xtag=%d<br>', $jtag );
 						printf( ':xlen=%d<br>', $jlen );
-						print 'Warning: parsing statfile aborted<br>';
-						$j = $len;
-						break;
+						print 'Warning: parsing statfile failed<br>';
+						$jlen = 4;
 					}
 					switch ($jtag) {
-					case 0:
-						$j = $len;
-						break;
 					case 3073: # FILE
 						if ( $nogroup != 0 )
 							$this->update_group( $default_group, $fpacks, $newfile, $tgets, $fsize, $fname );
@@ -724,6 +787,7 @@ function read_state( )
 function write_table( )
 {
 	global $javascript;
+	global $caption;
 
 	$ausgabe = array();
 	$nick2 = ereg_replace( '[^A-Za-z_0-9]', '', $this->nick );
@@ -733,12 +797,12 @@ function write_table( )
 
 	# Ueberschrift:
 	if ( isset( $_GET[ 'group' ] ) ) {
-		echo '<h1>'.$this->nick." Datei-Liste</h1>\n";
+		echo '<h1>'.$this->nick.' '.$caption[ 'listf' ]."</h1>\n";
 		echo "\n";
-		echo '<p>Download im IRC mit <span class="cmd">/msg '.$this->nick.' xdcc send #nummer</span></p>';
+		echo '<p>'.$caption[ 'download' ].' <span class="cmd">/msg '.$this->nick.' xdcc send #nummer</span></p>';
 		echo "\n";
 	} else {
-		echo '<h1>'.$this->nick." Gruppen-Liste</h1>\n";
+		echo '<h1>'.$this->nick.' '.$caption[ 'listg' ]."</h1>\n";
 		echo "\n";
 	}
 
@@ -747,49 +811,49 @@ function write_table( )
 <thead>
 ';
 	if ( isset( $_GET[ 'group' ] ) ) {
-		$hpack = '<a class="head" title="sortieren nach Pack-Nr."
-href="'.$this->make_self_order( '' ).'">PACK</a>';
-		$hgets = '<a class="head" title="sortieren nach Anzahl Downloads"
-href="'.$this->make_self_order( 'gets' ).'">DLs</a>';
-		$hsize = '<a class="head" title="sortieren nach Göße der Files"
-href="'.$this->make_self_order( 'size' ).'">GRÖSSE</a>';
+		$hpack = '<a class="head" title="'.$caption[ 'sortpack' ].'"
+href="'.$this->make_self_order( '' ).'">'.$caption[ 'pack' ].'</a>';
+		$hgets = '<a class="head" title="'.$caption[ 'sortgets' ].'"
+href="'.$this->make_self_order( 'gets' ).'">'.$caption[ 'gets' ].'</a>';
+		$hsize = '<a class="head" title="'.$caption[ 'sortsize' ].'"
+href="'.$this->make_self_order( 'size' ).'">'.$caption[ 'size' ].'</a>';
 
 		if ( !isset( $_GET[ 'order' ] ) ) {
 			foreach ( $this->info as $key => $data)
 				$ausgabe[ $key ] = $key;
 			asort( $ausgabe );
-			$hpack = 'PACK';
+			$hpack = $caption[ 'pack' ];
 		} else {
 			$ofound = 0;
 			if ( $_GET[ 'order' ] == 'gets' ) {
 				foreach ( $this->info as $key => $data)
 					$ausgabe[ $key ] = $this->info[ $key ][ 'xx_gets' ];
 				arsort( $ausgabe );
-				$hgets = 'DLs';
+				$hgets = $caption[ 'gets' ];
 				$ofound = 1;
 			}
 			if ( $_GET[ 'order' ] == 'size' ) {
 				foreach ( $this->info as $key => $data)
 					$ausgabe[ $key ] = $this->info[ $key ][ 'size' ];
 				arsort( $ausgabe );
-				$hsize = 'GRÖSSE';
+				$hsize = $caption[ 'size' ];
 				$ofound = 1;
 			}
 			if ( $ofound == 0 ) {
 				foreach ( $this->info as $key => $data)
 					$ausgabe[ $key ] = $key;
 				asort( $ausgabe );
-				$hpack = 'PACK';
+				$hpack = $caption[ 'pack' ];
 			}
 		}
-		$linkmore = '&nbsp;<a title="zurück" href="'.$this->make_self_back( '' ).'">(zurück)</a>';
+		$linkmore = '&nbsp;<a title="'.$caption[ 'back' ].'" href="'.$this->make_self_back( '' ).'">('.$caption[ 'back' ].')</a>';
 
 		echo '
 <tr>
 <th class="head">'.$hpack.'</th>
 <th class="head">'.$hgets.'</th>
 <th class="head">'.$hsize.'</th>
-<th class="head">BESCHREIBUNG'.$linkmore.'</th>
+<th class="head">'.$caption[ 'desc' ].$linkmore.'</th>
 </tr>
 </thead>
 ';
@@ -804,7 +868,7 @@ href="'.$this->make_self_order( 'size' ).'">GRÖSSE</a>';
 <th class="right">'.$tpacks.'</th>
 <th class="right">'.$this->gruppen[ $gr ][ 'xx_gets' ].'</th>
 <th class="right">'.makesize($tsize).'</th>
-<th class="head">['.makesize($this->gruppen[ $gr ][ 'trans' ]).'] vollständig heruntergeladen</th>
+<th class="head">['.makesize($this->gruppen[ $gr ][ 'trans' ]).'] '.$caption[ 'complete' ].'</th>
 </tr>
 </tfoot>
 <tbody>
@@ -852,54 +916,54 @@ href="'.$this->make_self_order( 'size' ).'">GRÖSSE</a>';
 		}
 
 	} else {
-		$hpack = '<a class="head" title="sortieren nach Pack-Nr."
-href="'.$this->make_self_order( 'pack' ).'">PACKs</a>';
-		$hgets = '<a class="head" title="sortieren nach Anzahl Downloads"
-href="'.$this->make_self_order( 'gets' ).'">DLs</a>';
-		$hrget = '<a class="head" title="sortieren nach Downloads per Datei"
-href="'.$this->make_self_order( 'rget' ).'">DLs/Pack</a>';
-		$hsize = '<a class="head" title="sortieren nach Göße der Files"
-href="'.$this->make_self_order( 'size' ).'">GRÖSSE</a>';
-		$htvol = '<a class="head" title="sortieren nach Übertragusngsvolumen"
-href="'.$this->make_self_order( 'tvol' ).'">Volumen</a>';
-		$hname = '<a class="head" title="sortieren nach Gruppe"
-href="'.$this->make_self_order( '' ).'">GRUPPE</a>';
+		$hpack = '<a class="head" title="'.$caption[ 'sortpack' ].'"
+href="'.$this->make_self_order( 'pack' ).'">'.$caption[ 'pack' ].'</a>';
+		$hgets = '<a class="head" title="'.$caption[ 'sortgets' ].'"
+href="'.$this->make_self_order( 'gets' ).'">'.$caption[ 'gets' ].'</a>';
+		$hrget = '<a class="head" title="'.$caption[ 'sortrget' ].'"
+href="'.$this->make_self_order( 'rget' ).'">'.$caption[ 'rget' ].'</a>';
+		$hsize = '<a class="head" title="'.$caption[ 'sortsize' ].'"
+href="'.$this->make_self_order( 'size' ).'">'.$caption[ 'size' ].'</a>';
+		$htvol = '<a class="head" title="'.$caption[ 'sorttvol' ].'"
+href="'.$this->make_self_order( 'tvol' ).'">'.$caption[ 'tvol' ].'</a>';
+		$hname = '<a class="head" title="'.$caption[ 'sortgroup' ].'"
+href="'.$this->make_self_order( '' ).'">'.$caption[ 'group' ].'</a>';
 
 		if ( !isset( $_GET[ 'order' ] ) ) {
 			foreach ( $this->gruppen as $key => $data)
 				$ausgabe[ $key ] = $key;
 			asort( $ausgabe );
-			$hname = 'GRUPPE';
+			$hname = $caption[ 'group' ];
 		} else {
 			if ( $_GET[ 'order' ] == 'pack' ) {
 				foreach ( $this->gruppen as $key => $data)
 					$ausgabe[ $key ] = $this->gruppen[ $key ][ 'packs' ];
 				arsort( $ausgabe );
-				$hpack = 'PACKs';
+				$hpack = $caption[ 'pack' ];
 			}
 			if ( $_GET[ 'order' ] == 'gets' ) {
 				foreach ( $this->gruppen as $key => $data)
 					$ausgabe[ $key ] = $this->gruppen[ $key ][ 'xx_gets' ];
 				arsort( $ausgabe );
-				$hgets = 'DLs';
+				$hgets = $caption[ 'gets' ];
 			}
 			if ( $_GET[ 'order' ] == 'rget' ) {
 				foreach ( $this->gruppen as $key => $data)
 					$ausgabe[ $key ] = $this->gruppen[ $key ][ 'xx_gets' ] / $this->gruppen[ $key ][ 'packs' ];
 				arsort( $ausgabe );
-				$hrget = 'DLs/Pack';
+				$hrget = $caption[ 'rget' ];
 			}
 			if ( $_GET[ 'order' ] == 'size' ) {
 				foreach ( $this->gruppen as $key => $data)
 					$ausgabe[ $key ] = $this->gruppen[ $key ][ 'size' ];
 				arsort( $ausgabe );
-				$hsize = 'GRÖSSE';
+				$hsize = $caption[ 'size' ];
 			}
 			if ( $_GET[ 'order' ] == 'tvol' ) {
 				foreach ( $this->gruppen as $key => $data)
 					$ausgabe[ $key ] = $this->gruppen[ $key ][ 'trans' ];
 				arsort( $ausgabe );
-				$htvol = 'Volumen';
+				$htvol = $caption[ 'tvol' ];
 			}
 		}
 
@@ -908,9 +972,9 @@ href="'.$this->make_self_order( '' ).'">GRUPPE</a>';
 		if ( isset( $_GET[ 'volumen' ] ) ) {
 			$tvol1 = '<th class="head">'.$htvol.'</th>';
 			$rget1 = '<th class="head">'.$hrget.'</th>';
-			$linkmore = '&nbsp;<a title="Volumen ausblenden" href="'.$this->make_self_more().'">(weniger)</a>';
+			$linkmore = '&nbsp;<a title="'.$caption[ 'titleless' ].'" href="'.$this->make_self_more().'">('.$caption[ 'less' ].')</a>';
 		} else {
-			$linkmore = '&nbsp;<a title="Volumen anzeigen" href="'.$this->make_self_more().'">(mehr)</a>';
+			$linkmore = '&nbsp;<a title="'.$caption[ 'titlemore' ].'" href="'.$this->make_self_more().'">('.$caption[ 'more' ].')</a>';
 		}
 
 		echo '
@@ -921,7 +985,7 @@ href="'.$this->make_self_order( '' ).'">GRUPPE</a>';
 <th class="head">'.$hsize.'</th>
 '.$tvol1.'
 <th class="head">'.$hname.'</th>
-<th class="head">BESCHREIBUNG'.$linkmore.'</th>
+<th class="head">'.$caption[ 'desc' ].$linkmore.'</th>
 </tr>
 </thead>
 ';
@@ -948,7 +1012,7 @@ href="'.$this->make_self_order( '' ).'">GRUPPE</a>';
 <th class="right">'.makesize($tsize).'</th>
 '.$tvol2.'
 <th class="head">'.$tcount.'</th>
-<th class="head"><a title="alle Packs in einer Liste anzeigen" href="'.$this->make_self_group( '*' ).'">alle Packs</a> ['.makesize($this->total[ 'trans' ]).'] vollständig heruntergeladen, ['.makesize($part).']&nbsp;unvollständig</th>
+<th class="head"><a title="'.$caption[ 'titleall' ].'" href="'.$this->make_self_group( '*' ).'">'.$caption[ 'all' ].'</a> ['.makesize($this->total[ 'trans' ]).'] '.$caption[ 'complete' ].', ['.makesize($part).']&nbsp;'.$caption[ 'uncomplete' ].'</th>
 </tr>
 </tfoot>
 <tbody>
@@ -983,7 +1047,7 @@ href="'.$this->make_self_order( '' ).'">GRUPPE</a>';
 <td class="right">'.makesize($asize).'</td>
 '.$tvol3.'
 <td class="content">'.htmlspecialchars($key).'</td>
-<td class="content"><a title="Liste dieser Packs anzeigen" href="'.$link.'">'.htmlspecialchars($tname).'</a></td>
+<td class="content"><a title="'.$caption[ 'titlegroup' ].'" href="'.$link.'">'.htmlspecialchars($tname).'</a></td>
 </tr>
 ';
 		}
@@ -1026,6 +1090,8 @@ href="'.$this->make_self_order( '' ).'">GRUPPE</a>';
 	echo '
 </tbody>
 </table>
+<br>
+<a class="credits" href="http://iroffer.dinoex.net/">'.$caption[ 'source' ].'</a>
 ';
 
 }
