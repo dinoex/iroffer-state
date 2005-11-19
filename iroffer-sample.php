@@ -48,7 +48,6 @@ $chroot_path = '';
 
 # Welche Daten sollen angezeigt werden?
 $statistik = array (
-#	'version' => 'Version',
 #	'uptimetext' => 'Online',
 #	'timetext' => 'letztes Update',
 	'freeslots' => 'Freie Slots',
