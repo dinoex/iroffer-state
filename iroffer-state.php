@@ -604,6 +604,7 @@ function read_state( )
 
 	$packs = 0;
 	$fpacks = 0;
+	$fsize = 0;
 	$newfile = 0;
 	$nogroup = 0;
 	$fname = '';
@@ -777,7 +778,7 @@ function read_state( )
 				$i += 4 - $r;
 		}
 	}
-	if ( ( $nogroup != 0 ) && ( $this->support_groups != 0 ) )
+	if ( $nogroup != 0 )
 		$this->update_group( $default_group, $fpacks, $newfile, $tgets, $fsize, $fname );
 
 	write_sizecache( $cache_file );
