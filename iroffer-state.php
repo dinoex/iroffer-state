@@ -32,7 +32,11 @@ $strip_in_names = array (
 );
 
 $headers = getallheaders();
-if ( strstr( $headers[ 'Accept-Language' ], 'de' ) ) {
+$bowser = '';
+if ( isset( $headers[ 'Accept-Language' ] ) )
+	$bowser = $headers[ 'Accept-Language' ];
+
+if ( strstr( $bowser, 'de' ) ) {
 	$caption = array(
 		'id' => 'de',
 		'listf' => 'Datei-Liste',
