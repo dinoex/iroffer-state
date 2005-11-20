@@ -8,7 +8,7 @@
 #
 
 $meta_generator = '
-<meta name="generator" content="iroffer-state 2.4, iroffer.dinoex.net">
+<meta name="generator" content="iroffer-state 2.5, iroffer.dinoex.net">
 ';
 
 # IRC-Farbe-Codes ausblenden
