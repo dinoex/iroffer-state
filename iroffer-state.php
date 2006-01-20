@@ -804,7 +804,7 @@ function write_table( )
 	if ( isset( $_GET[ 'group' ] ) ) {
 		echo '<h1>'.$this->nick.' '.$caption[ 'listf' ]."</h1>\n";
 		echo "\n";
-		echo '<p>'.$caption[ 'download' ].' <span class="cmd">/msg '.$this->nick.' xdcc send #nummer</span></p>';
+		echo '<p>'.$caption[ 'download' ].' <span class="cmd">/msg '.$this->nick.' xdcc send nummer</span></p>';
 		echo "\n";
 	} else {
 		echo '<h1>'.$this->nick.' '.$caption[ 'listg' ]."</h1>\n";
@@ -901,12 +901,12 @@ href="'.$this->make_self_order( 'size' ).'">'.$caption[ 'size' ].'</a>';
 					$jsid.'\');>'.
 					$tname."</span>\n".
 					'<span id="'.$jsid.'" class="hidden">'.
-					'/msg '.$this->nick.' xdcc send #'.$tpack."</span>\n";
+					'/msg '.$this->nick.' xdcc send '.$tpack."</span>\n";
 			}
 			if ( isset( $this->info[ $key ][ 'xx_note' ] ) )
 				$tname .= '<br>'.$this->info[ $key ][ 'xx_note' ];
 
-			$label = "Download mit:\n/msg ".$this->nick.' xdcc send #'.$tpack."\n";
+			$label = "Download mit:\n/msg ".$this->nick.' xdcc send '.$tpack."\n";
 			if ( isset( $this->info[ $key ][ 'xx_md5' ] ) )
 				$label .= "\nmd5: ".$this->info[ $key ][ 'xx_md5' ];
 
