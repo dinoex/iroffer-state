@@ -1,6 +1,10 @@
 #!/bin/sh
 for name in "$@"
 do
+	if test -f "${name}"
+	then
+		continue
+	fi
 	sum1=`cksum -o 3 "${name}" |
 	awk '{
 		CRC = $1
