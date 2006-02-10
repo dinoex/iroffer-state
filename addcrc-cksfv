@@ -1,4 +1,5 @@
 #!/bin/sh
+# $Id: addcrc-cksfv,v 1.2 2006/02/10 18:30:20 dm Exp $
 for name in "$@"
 do
 	if test ! -f "${name}"
@@ -15,8 +16,11 @@ do
 		continue
 		;;
 	*)
-		neu="${name%.*}[${sum1}].${name##*.}"
+		dir="${name%/*}"
+		file="${name##*/}"
+		neu="${file%.*}[${sum1}].${file##*.}"
 		neu=`echo ${neu} | sed -e "s= =_=g"`
+		neu="${dir}/${neu}"
 		echo \
 		mv -i "${name}" "${neu}"
 		mv -i "${name}" "${neu}"
