@@ -56,7 +56,7 @@ class LogHashPack < LogHash
 		print "Die beliebtesten #{@title}s: Zahl der #{@art}, #{@title}\n"
 		pop = populaerste(n)
 		pop.each { |b, a|
-			printf "%7d\t%s\n", a, $packs[ b.to_i ]
+			printf "%7d\t#%s\t%s\n", a, $packs[ b.to_i ]
 		}
 		print "\n"
 	end
