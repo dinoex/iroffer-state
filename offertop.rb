@@ -1,6 +1,6 @@
 #!/usr/local/bin/ruby -w
 #
-#	$Id: offertop.rb,v 1.2 2006/02/12 14:52:48 dm Exp $
+#	$Id: offertop.rb,v 1.3 2006/02/12 14:53:37 dm Exp $
 #	(c) 2005, Dirk Meyer, Im Grund 4, 34317 Habichtswald
 #	based on wirk from:;
 #	(C) 2002 by dpunkt.de, Armin Roehrl, Stefan Schmiedl, Clemens Wyss 2002-01-20
@@ -56,7 +56,7 @@ class LogHashPack < LogHash
 		print "Die beliebtesten #{@title}s: Zahl der #{@art}, #{@title}\n"
 		pop = populaerste(n)
 		pop.each { |b, a|
-			printf "%7d\t%s\n", a, $packs[ b.to_i ]
+			printf "%7d\t#%s\t%s\n", a, $packs[ b.to_i ]
 		}
 		print "\n"
 	end
