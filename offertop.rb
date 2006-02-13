@@ -1,6 +1,6 @@
 #!/usr/local/bin/ruby -w
 #
-#	$Id: offertop.rb,v 1.5 2006/02/12 15:59:54 dm Exp $
+#	$Id: offertop.rb,v 1.6 2006/02/13 11:41:32 dm Exp $
 #	(c) 2005, Dirk Meyer, Im Grund 4, 34317 Habichtswald
 #	based on wirk from:;
 #	(C) 2002 by dpunkt.de, Armin Roehrl, Stefan Schmiedl, Clemens Wyss 2002-01-20
@@ -191,7 +191,7 @@ if ARGV.size > 0 then
 			parse_state( filename )
 			next
 		end
-		if /[.]log/.match( filename )
+		if /[.](log|txt)/.match( filename )
 			if ( $packs.size == 0 )
 				state = filename.sub( /[.].*$/, '' )
 				parse_state( "#{state}.state" )
