@@ -38,27 +38,27 @@ class LogHash < Hash
 	end
 
 	def printtop(n)
-		print sum, " #{@art}\n"
-		print size, " verschiedene #{@title}s\n"
-		print "Die beliebtesten #{@title}s: Zahl der #{@art}, #{@title}\n"
+		$output.print sum, " #{@art}\n"
+		$output.print size, " verschiedene #{@title}s\n"
+		$output.print "Die beliebtesten #{@title}s: Zahl der #{@art}, #{@title}\n"
 		pop = populaerste(n)
 		pop.each { |b, a|
-			printf "%7d\t%s\n", a, b
+			$output.printf "%7d\t%s\n", a, b
 		}
-		print "\n"
+		$output.print "\n"
 	end
 end
 
 class LogHashPack < LogHash
 	def printtop(n)
-		print sum, " #{@art}\n"
-		print size, " verschiedene #{@title}s\n"
-		print "Die beliebtesten #{@title}s: Zahl der #{@art}, #{@title}\n"
+		$output.print sum, " #{@art}\n"
+		$output.print size, " verschiedene #{@title}s\n"
+		$output.print "Die beliebtesten #{@title}s: Zahl der #{@art}, #{@title}\n"
 		pop = populaerste(n)
 		pop.each { |b, a|
-			printf "%7d\t#%s\t%s\n", a, b, $packs[ b.to_i ]
+			$output.printf "%7d\t#%s\t%s\n", a, b, $packs[ b.to_i ]
 		}
-		print "\n"
+		$output.print "\n"
 	end
 end
 
@@ -185,13 +185,14 @@ def make_statistik( input )
 end
 
 input = 0
+$output = STDOUT
 if ARGV.size > 0 then
 	ARGV.each { |filename|
 		if /[.]state/.match( filename )
 			parse_state( filename )
 			next
 		end
-		if /[.](log|txt)/.match( filename )
+		if FileTest.exist?( filename )
 			if ( $packs.size == 0 )
 				state = filename.sub( /[.].*$/, '' )
 				parse_state( "#{state}.state" )
@@ -203,11 +204,13 @@ if ARGV.size > 0 then
 			end
 			STDERR.print "Only 1 Logfile supported!\n"
 			exit 1
+		else
+			$output = File.open(filename, 'w')
 		end
 	}
 else
-	STDERR.print "State-file not given!\n"
-	exit 1
+	STDERR.print "Usage: offertop <statefile> <logfile> [<outputfile>]\n"
+	exit 64
 end
  
 if input == 0
@@ -217,6 +220,10 @@ end
 $list.each { |top|
 	top.printtop( 10 )
 }
+
+if $output != STDOUT
+	$output.close
+end
 
 exit 0
 # eof
