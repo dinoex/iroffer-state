@@ -191,7 +191,7 @@ if ARGV.size > 0 then
 			parse_state( filename )
 			next
 		end
-		if /[.]log/.match( filename )
+		if /[.](log|txt)/.match( filename )
 			if ( $packs.size == 0 )
 				state = filename.sub( /[.].*$/, '' )
 				parse_state( "#{state}.state" )
