@@ -40,9 +40,9 @@ class LogHash < Hash
 	def printtop(n)
 		$output.print sum, " #{@art}\n"
 		$output.print size, " verschiedene #{@title}s\n"
-		$output.print "Die beliebtesten #{@title}s: Zahl der #{@art}, #{@title}\n"
 		pop = populaerste(n)
 		if not pop.nil?
+			$output.print "Die beliebtesten #{@title}s: Zahl der #{@art}, #{@title}\n"
 			pop.each { |b, a|
 				$output.printf "%7d\t%s\n", a, b
 			}
@@ -55,9 +55,9 @@ class LogHashPack < LogHash
 	def printtop(n)
 		$output.print sum, " #{@art}\n"
 		$output.print size, " verschiedene #{@title}s\n"
-		$output.print "Die beliebtesten #{@title}s: Zahl der #{@art}, #{@title}\n"
 		pop = populaerste(n)
 		if not pop.nil?
+			$output.print "Die beliebtesten #{@title}s: Zahl der #{@art}, #{@title}\n"
 			pop.each { |b, a|
 				$output.printf "%7d\t#%s\t%s\n", a, b, $packs[ b.to_i ]
 			}
