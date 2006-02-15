@@ -42,9 +42,11 @@ class LogHash < Hash
 		$output.print size, " verschiedene #{@title}s\n"
 		$output.print "Die beliebtesten #{@title}s: Zahl der #{@art}, #{@title}\n"
 		pop = populaerste(n)
-		pop.each { |b, a|
-			$output.printf "%7d\t%s\n", a, b
-		}
+		if not pop.nil?
+			pop.each { |b, a|
+				$output.printf "%7d\t%s\n", a, b
+			}
+		end
 		$output.print "\n"
 	end
 end
@@ -55,9 +57,11 @@ class LogHashPack < LogHash
 		$output.print size, " verschiedene #{@title}s\n"
 		$output.print "Die beliebtesten #{@title}s: Zahl der #{@art}, #{@title}\n"
 		pop = populaerste(n)
-		pop.each { |b, a|
-			$output.printf "%7d\t#%s\t%s\n", a, b, $packs[ b.to_i ]
-		}
+		if not pop.nil?
+			pop.each { |b, a|
+				$output.printf "%7d\t#%s\t%s\n", a, b, $packs[ b.to_i ]
+			}
+		end
 		$output.print "\n"
 	end
 end
