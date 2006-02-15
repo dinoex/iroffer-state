@@ -1,6 +1,6 @@
 #!/usr/local/bin/ruby -w
 #
-#	$Id: offertop.rb,v 1.8 2006/02/15 17:01:30 dm Exp $
+#	$Id: offertop.rb,v 1.9 2006/02/15 17:03:51 dm Exp $
 #	(c) 2005, Dirk Meyer, Im Grund 4, 34317 Habichtswald
 #	based on wirk from:;
 #	(C) 2002 by dpunkt.de, Armin Roehrl, Stefan Schmiedl, Clemens Wyss 2002-01-20
@@ -40,9 +40,9 @@ class LogHash < Hash
 	def printtop(n)
 		$output.print sum, " #{@art}\n"
 		$output.print size, " verschiedene #{@title}s\n"
-		$output.print "Die beliebtesten #{@title}s: Zahl der #{@art}, #{@title}\n"
 		pop = populaerste(n)
 		if not pop.nil?
+			$output.print "Die beliebtesten #{@title}s: Zahl der #{@art}, #{@title}\n"
 			pop.each { |b, a|
 				$output.printf "%7d\t%s\n", a, b
 			}
@@ -55,9 +55,9 @@ class LogHashPack < LogHash
 	def printtop(n)
 		$output.print sum, " #{@art}\n"
 		$output.print size, " verschiedene #{@title}s\n"
-		$output.print "Die beliebtesten #{@title}s: Zahl der #{@art}, #{@title}\n"
 		pop = populaerste(n)
 		if not pop.nil?
+			$output.print "Die beliebtesten #{@title}s: Zahl der #{@art}, #{@title}\n"
 			pop.each { |b, a|
 				$output.printf "%7d\t#%s\t%s\n", a, b, $packs[ b.to_i ]
 			}
