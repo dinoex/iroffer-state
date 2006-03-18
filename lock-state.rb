@@ -1,20 +1,15 @@
 #!/usr/local/bin/ruby -w
-#	$Id: lock-state.rb,v 1.1 2005/12/25 16:12:55 dm Exp $
+#	$Id: lock-state.rb,v 1.2 2006/03/18 08:45:36 dm Exp $
 #	(c) 2005, Dirk Meyer, Im Grund 4, 34317 Habichtswald
 #
 # Updates on:
 #	http://anime.dinoex.net/xdcc/tools/
 #
 
-require 'getoptlong'
-
-def usage(msg, options)
-	print msg, "\nUsage: #{File.basename($0)} statefile [statefile ...]\n\n"
-	print msg, "export iroffer statefile to text.\n"
-	options.each { |o|
-		print "  " + o[1] + ", " + o[0] + " " +
-			(o[2] == GetoptLong::REQUIRED_ARGUMENT ? 'ARGUMENT' : '') + "\n"
-	}
+def usage(msg)
+	STDERR.print msg, "\n\n"
+	STDERR.print "Usage: #{File.basename($0)} statefile [statefile ...]\n\n"
+	STDERR.print "export iroffer statefile to text.\n"
 	exit 64
 end
 
@@ -148,7 +143,7 @@ if ARGV.size > 0 then
 		end
 	}
 else
-	usage('State-file not given!', options)
+	usage('State-file not given!')
 end
 
 exit 0
