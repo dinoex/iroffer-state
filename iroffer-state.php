@@ -8,7 +8,7 @@
 #
 
 $meta_generator = '
-<meta name="generator" content="iroffer-state 2.5, iroffer.dinoex.net">
+<meta name="generator" content="iroffer-state 2.6, iroffer.dinoex.net">
 ';
 
 # IRC-Farbe-Codes ausblenden
@@ -753,6 +753,11 @@ function read_state( )
 					case 3082: # LOCK
 						$this->info[ $fpacks ][ 'xx_lock' ] = 1;
 						break;
+					case 3086: # CRC32
+						$text = substr( $chunkdata, $j + 8, $jlen - 8 );
+						$tcrc = get_long( $text );
+						$this->info[ $fpacks ][ 'xx_crc' ] = sprintf( '%08lX', $tcrc );
+						break;
 					}
 					$j += $jlen;
 					$r = $jlen % 4;
@@ -909,6 +914,8 @@ href="'.$this->make_self_order( 'size' ).'">'.$caption[ 'size' ].'</a>';
 			$label = "Download mit:\n/msg ".$this->nick.' xdcc send '.$tpack."\n";
 			if ( isset( $this->info[ $key ][ 'xx_md5' ] ) )
 				$label .= "\nmd5: ".$this->info[ $key ][ 'xx_md5' ];
+			if ( isset( $this->info[ $key ][ 'xx_crc' ] ) )
+				$label .= "\ncrc32: ".$this->info[ $key ][ 'xx_crc' ];
 
 			echo '
 <tr>
