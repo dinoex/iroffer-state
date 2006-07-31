@@ -49,7 +49,7 @@ $chroot_path = '';
 # Welche Daten sollen angezeigt werden?
 $statistik = array (
 #	'uptimetext' => 'Online',
-#	'timetext' => 'letztes Update',
+	'timetext' => 'letztes Update',
 	'freeslots' => 'Freie Slots',
 #	'maxslots' => 'Anzahl Slots',
 	'queue' => 'Warteschlange',
