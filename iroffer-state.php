@@ -8,7 +8,7 @@
 #
 
 $meta_generator = '
-<meta name="generator" content="iroffer-state 2.6, iroffer.dinoex.net">
+<meta name="generator" content="iroffer-state 2.7, iroffer.dinoex.net">
 ';
 
 # IRC-Farbe-Codes ausblenden
@@ -24,6 +24,7 @@ $strip_in_names = array (
 	"\0033",
 	"\0034",
 	"\0035\037",
+	"\0035",
 	"\0037",
 	"\0032",
 	"\00310",
@@ -31,10 +32,9 @@ $strip_in_names = array (
 	"\017",
 );
 
-$headers = getallheaders();
 $bowser = '';
-if ( isset( $headers[ 'Accept-Language' ] ) )
-	$bowser = $headers[ 'Accept-Language' ];
+if ( isset( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) )
+	$bowser = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
 
 if ( strstr( $bowser, 'de' ) ) {
 	$caption = array(
