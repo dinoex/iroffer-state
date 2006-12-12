@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: addcrc,v 1.4 2006/02/10 18:30:20 dm Exp $
+# $Id: addcrc,v 1.5 2006/12/12 19:53:32 dm Exp $
 for name in "$@"
 do
 	if test -f "${name}"
@@ -23,6 +23,10 @@ do
 		;;
 	*)
 		dir="${name%/*}"
+		if test "${dir}" = "${name}"
+		then
+			dir="."
+		fi
 		file="${name##*/}"
 		neu="${file%.*}[${sum1}].${file##*.}"
 		neu=`echo ${neu} | sed -e "s= =_=g"`
