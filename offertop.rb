@@ -69,7 +69,7 @@ end
 # ** 2006-02-10-06:17:25: XDCC SEND #29 requested: ihs (euirc-13824fe7.bpool.celox.de)
 # ** 2006-02-10-17:48:48: XDCC SEND 15 Queued (slot): Spaghetti (euirc-6ab9fef9.adsl.alicedsl.de)
 $request_pack = / XDCC SEND #*([0-9]*) (requested|Queued .slot.): [^ ]* /
-$request_nick = / XDCC SEND #*[0-9]* (requested|Queued .slot.): ([^ ]*[)/
+$request_nick = / XDCC SEND #*[0-9]* (requested|Queued .slot.): ([^ )]*)/
 # ** 2006-02-10-06:17:26: XDCC [515:ihs]: Connection established (84.245.180.163:1027 -> 213.239.196.229:53686)
 $connected_nick = / XDCC [\[][0-9]*[:]([^\]]*)[\]]: Connection established /
 # ** 2006-02-10-06:39:30: XDCC [515:ihs]: Transfer Completed (383302 KB, 22 min 3.865 sec, 289.5 KB/sec)
