@@ -40,6 +40,9 @@ $default_group = '.neu';
 # Setze dies auf 1, dann werden gesperrte Packs nicht gelistet.
 $hide_locked = 0;
 
+# Liste von gruppen die nicht angezeigt werden. Trennzeichen '|'
+$hide_groups = '';
+
 # Pfad "files_dir" in der iroffer config.
 $base_path = './';
 
@@ -92,6 +95,7 @@ $bot->base_path = $base_path;
 $bot->chroot_path = $chroot_path;
 $bot->statistik = $statistik;
 $bot->hide_locked = $hide_locked;
+$bot->hide_groups = $hide_groups;
 # $bot->add_url = 'debug=1';
 
 $bot->read_state();

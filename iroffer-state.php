@@ -8,7 +8,7 @@
 #
 
 $meta_generator = '
-<meta name="generator" content="iroffer-state 2.7, iroffer.dinoex.net">
+<meta name="generator" content="iroffer-state 2.8, iroffer.dinoex.net">
 ';
 
 # IRC-Farbe-Codes ausblenden
@@ -128,6 +128,8 @@ function read_sizecache( $filename ) {
 	global $sizecache_dirty;
 
 	$sizecache_dirty = 0;
+	if ( !file_exists( $filename ) )
+		return;
 	$len = filesize($filename);
 	if ( $len <= 0 ) 
 		return;
@@ -290,6 +292,7 @@ class iroffer_botlist {
 	var $chroot_path;
 	var $statistik;
 	var $hide_locked;
+	var $hide_groups;
 	var $add_url;
 # output
 	var $total;
@@ -1035,6 +1038,10 @@ href="'.$this->make_self_order( '' ).'">'.$caption[ 'group' ].'</a>';
 				continue;
 			if ( $key == '*' )
 				continue;
+			if ( $this->hide_groups != '' ) {
+				if ( ereg( $this->hide_groups, $key ) )
+					continue;
+			}
 
 			$tpacks= $this->gruppen[ $key ][ 'packs' ];
 			$asize = $this->gruppen[ $key ][ 'size' ];
