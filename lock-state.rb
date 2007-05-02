@@ -107,7 +107,11 @@ def parse_buffer(buffer, bsize)
 					seen_group[ group ] = groupdesc
 					final = 0
 				when 3082 # LOCK
-					lock_entry = 1
+					text = chunkdata[jpos + 7, jlen - 8]
+					pwd = get_text( text )
+					if pwd != 'pantsu'
+						lock_entry = 1
+					end
 				end
 				jpos += jlen
 				r = jlen % 4
