@@ -13,13 +13,15 @@ class LogHash < Hash
 	attr_reader :re
 	attr_reader :title
 	attr_reader :art
+	attr_reader :klammer
 
 	# Hash mit Standardwert 0
-	def initialize( re, title, art )
+	def initialize( re, title, artm, klammer = 1 )
 		super(0)
 		@re = re
 		@title = title
 		@art = art
+		@klammer = klammer
 	end
 
 	# absteigend sortieren nach Werten
@@ -95,7 +97,8 @@ def log_search( input, *hash )
 		for line in data.split(split)
 			for i in 1...hash.length
 				if md = hash[i].re.match(line)
-					hash[i][md[1]] += 1
+					key = md[ hash[i].klammer ]
+					hash[i][ key ] += 1
 				end
 			end
 		end
@@ -182,7 +185,7 @@ end
 def make_statistik( input )
 	return log_search( input,
 		LogHashPack.new( $request_pack, 'Pack', 'Anfragen' ),
-		LogHash.new( $request_nick, 'Nick', 'Anfragen' ),
+		LogHash.new( $request_nick, 'Nick', 'Anfragen', 2 ),
 		LogHash.new( $connected_nick, 'Nick', 'Verbindungen' ),
 		LogHash.new( $completed_nick, 'Nick', 'Downloads' )
 		)
