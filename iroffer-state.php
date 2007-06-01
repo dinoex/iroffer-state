@@ -8,7 +8,7 @@
 #
 
 $meta_generator = '
-<meta name="generator" content="iroffer-state 2.8, iroffer.dinoex.net">
+<meta name="generator" content="iroffer-state 2.9, iroffer.dinoex.net">
 ';
 
 # IRC-Farbe-Codes ausblenden
@@ -471,14 +471,21 @@ function read_removed( $statefile ) {
 			continue;
 
 		if ( $key == 'xx_file' ) {
-			$fsize = filesize_cache( $text );
+			$xfile = $text;
+			$fsize = 0;
 			if ( isset( $this->seen[ $text ] ) )
 				continue;
 			$this->seen[ $text ] = 0;
 			$this->total[ 'packs' ] ++;
-			$this->total[ 'size' ] += $fsize;
+		}
+		if ( $key == 'xx_size' ) {
+			$fsize = $text;
 		}
 		if ( $key == 'xx_gets' ) {
+			if ( $fsize == 0 ) {
+				$fsize = filesize_cache( $xfile );
+			}
+			$this->total[ 'size' ] += $fsize;
 			$this->total[ 'xx_gets' ] += $text;
 			$this->total[ 'trans' ] += $fsize * $text;
 		}
