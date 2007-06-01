@@ -10,7 +10,7 @@ $chroot = ""
 
 def usage(msg)
 	print msg, "\nUsage: #{File.basename($0)} statefile [statefile ...]\n\n"
-	print msg, "export iroffer statefile to text.\n"
+	print "export iroffer statefile to text.\n"
 	exit 64
 end
 
@@ -231,13 +231,18 @@ if ARGV.size > 0 then
 				case words[ 0 ]
 				when 'xx_file'
 					$xf = words[ 1 ]
-					$bytes = filesize_cache( $xf )
+					$bytes = 0
+				when 'xx_desc'
+					$xd = words[ 1 ]
+				when 'xx_size'
+					$bytes = words[ 1 ].to_i
+				when 'xx_gets'
+					if $bytes == 0
+						$bytes = filesize_cache( $xf )
+					end
 					$sum_bytes += $bytes
 					$all_bytes += $bytes
 					$size = makesize( $bytes )
-				when 'xx_desc'
-					$xd = words[ 1 ]
-				when 'xx_gets'
 					$xg = words[ 1 ].to_i
 					$sum_xg += $xg
 					$all_xg += $xg
