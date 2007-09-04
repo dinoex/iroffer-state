@@ -8,7 +8,7 @@
 #
 
 $meta_generator = '
-<meta name="generator" content="iroffer-state 2.9, iroffer.dinoex.net">
+<meta name="generator" content="iroffer-state 2.10, iroffer.dinoex.net">
 ';
 
 # IRC-Farbe-Codes ausblenden
@@ -138,6 +138,7 @@ function read_sizecache( $filename ) {
 		$tread = fread($fp, $len);
 		fclose($fp);
 		$tlines = explode("\n", $tread);
+		unset( $tread );
 		foreach ( $tlines as $ykey => $ydata) {
 			if ( ereg( '[:]', $ydata ) ) {
 				list( $key, $tsize ) = explode(':', $ydata, 2);
@@ -145,6 +146,7 @@ function read_sizecache( $filename ) {
 					$sizecache[ $key ] = $tsize;
 			}
 		}
+		unset( $tlines );
 	}
 }
 
@@ -448,11 +450,12 @@ function read_removed( $statefile ) {
 	$read = '';
 	$fp = fopen( $filename, 'r' );
 	if ( $fp ) {
-		$read .= fread($fp, filesize ($filename));
+		$read = fread($fp, filesize ($filename));
 		fclose($fp);
 	}
 
 	$datalines = explode("\n", $read);
+	unset( $read );
 	foreach ( $datalines as $key => $data) {
 		if ( $data == '' )
 			continue;
@@ -490,6 +493,7 @@ function read_removed( $statefile ) {
 			$this->total[ 'trans' ] += $fsize * $text;
 		}
 	}
+	unset( $datalines );
 }
 
 function read_status( $statefile ) {
@@ -501,11 +505,12 @@ function read_status( $statefile ) {
 	$read = '';
 	$fp = fopen( $filename, 'r' );
 	if ( $fp ) {
-		$read .= fread($fp, filesize ($filename));
+		$read = fread($fp, filesize ($filename));
 		fclose($fp);
 	}
 
 	$datalines = explode("\n", $read);
+	unset( $read );
 	foreach ( $datalines as $key => $data) {
 		if ( $data == '' )
 			continue;
@@ -563,6 +568,7 @@ function read_status( $statefile ) {
 		}
 		continue;
 	}
+	unset( $datalines );
 }
 
 function update_group( $gr, $fpacks, $newfile, $tgets, $fsize, $fname ) {
