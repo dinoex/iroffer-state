@@ -7,3 +7,6 @@ iroffer ab 1.3.b05
 
 	Scripte mit *-state* im Namen.
 
+Caveats:
+	phpp.ini: magiq_quotes_runtime = OFF
+
