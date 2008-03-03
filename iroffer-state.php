@@ -8,7 +8,7 @@
 #
 
 $meta_generator = '
-<meta name="generator" content="iroffer-state 2.10, iroffer.dinoex.net">
+<meta name="generator" content="iroffer-state 2.11, iroffer.dinoex.net">
 ';
 
 # IRC-Farbe-Codes ausblenden
@@ -718,6 +718,11 @@ function read_state( )
 							$this->info[ $fpacks ][ 'xx_gets' ] = 0;
 							$this->info[ $fpacks ][ 'trans' ] = 0;
 						}
+						$text = ereg_replace( '^.*/', '', $text )
+						$text = clean_names( $text );
+						if ( $max_filename_len > 0 )
+							$text = max_name_len( $text, $max_filename_len );
+						$this->info[ $fpacks ][ 'xx_desc' ] = $text;
 						break;
 					case 3074: # DESC
 						if ( isset( $this->info[ $fpacks ][ 'xx_desc' ] ) )
