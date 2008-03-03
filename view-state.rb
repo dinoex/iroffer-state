@@ -31,33 +31,37 @@ def makesize(bytes)
 	end
 	nbytes = ( nbytes  + 512 ) / 1024
 	if ( nbytes < 1000 )
-                return sprintf( "%3dk", nbytes )
+		return sprintf( "%3dk", nbytes )
 	end
 	nbytes = ( nbytes  + 512 ) / 1024
 	if ( nbytes < 1000 )
-                return sprintf( "%3dM", nbytes )
+		return sprintf( "%3dM", nbytes )
 	end
 	if ( nbytes < 10000 )
-                return sprintf( "%3.1fG", ( nbytes.to_f / 1024) )
+		return sprintf( "%3.1fG", ( nbytes.to_f / 1024) )
 	end
 	nbytes = ( nbytes  + 512 ) / 1024
 	if ( nbytes < 1000 )
-                return sprintf( "%3dG", nbytes )
+		return sprintf( "%3dG", nbytes )
 	end
 	if ( nbytes < 10000 )
-                return sprintf( "%3.1fT", ( nbytes.to_f / 1024 ) )
+		return sprintf( "%3.1fT", ( nbytes.to_f / 1024 ) )
 	end
 	nbytes = ( nbytes  + 512 ) / 1024
 	if ( nbytes < 1000 )
-                return sprintf( "%3dT", nbytes )
+		return sprintf( "%3dT", nbytes )
 	end
 	return sprintf( "%3dE", nbytes )
 end
 
 def ausgabe()
+	if $xf.nil?
+		return
+	end
 	$pack += 1
 	$all_pack += 1
-        printf( "%3s %3dx [%4s] %s\n", "##{$pack}", $xg, $size, $xd )
+	printf( "%3s %3dx [%4s] %s\n", "##{$pack}", $xg, $size, $xd )
+	$xf = nil
 end
 
 def ausgabetotal()
@@ -71,7 +75,7 @@ def ausgabetotal()
 	end
 	$total = sprintf( "total in files, [%4s] total downloaded, [%4s] partial",
 		$transfer_size, $partial_size )
-        printf( "%3s %3dx [%4s] %s\n", "##{$pack}", $sum_xg, $sum_size, $total )
+	printf( "%3s %3dx [%4s] %s\n", "##{$pack}", $sum_xg, $sum_size, $total )
 end
 
 def get_long(string)
@@ -92,6 +96,7 @@ def get_text(string)
 end
 
 def parse_buffer(buffer, bsize)
+	$xf = nil
 	fsize = bsize - 16;
 	ipos = 8
 	while ipos < fsize
@@ -129,14 +134,16 @@ def parse_buffer(buffer, bsize)
 				end
 				case jtag
 				when 0
-					jpos = len
-				when 3073 # FILE
+				jpos = len
+			when 3073 # FILE
+					ausgabe()
 					text = chunkdata[jpos + 7, jlen - 8]
 					$xf = get_text( text )
 					$bytes = filesize_cache( $xf )
 					$sum_bytes += $bytes
 					$all_bytes += $bytes
 					$size = makesize( $bytes )
+					$xd = text.gsub( /^.*\//, '' )
 				when 3074 # DESC
 					text = chunkdata[jpos + 7, jlen - 8]
 					$xd = get_text( text )
@@ -148,7 +155,6 @@ def parse_buffer(buffer, bsize)
 					$xg_bytes = $xg * $bytes
 					$sum_xg_bytes += $xg_bytes
 					$all_xg_bytes += $xg_bytes
-					ausgabe()
 #				when 3080 # GROUP NAME
 #					text = chunkdata[jpos + 7, jlen - 8]
 #					group = get_text( text )
@@ -156,6 +162,15 @@ def parse_buffer(buffer, bsize)
 #					text = chunkdata[jpos + 7, jlen - 8]
 #					groupdesc = get_text( text )
 #					printf( "groupdesc %s %s\n", group, groupdesc )
+				when 3082 # LOCK
+					text = chunkdata[jpos + 7, jlen - 8]
+					$lock = get_text( text )
+					case $lock
+					when 'badcrc', 'old'
+						$xd << " (#{$lock})"
+					else
+						$xd << ' (gesperrt)'
+					end
 				end
 				jpos += jlen
 				r = jlen % 4
@@ -170,6 +185,7 @@ def parse_buffer(buffer, bsize)
 			ipos += 4 - r;
 		end
 	end
+	ausgabe()
 	ausgabetotal()
 	$pack = 0
 	$sum_bytes = 0
