@@ -8,7 +8,7 @@
 #
 
 $meta_generator = '
-<meta name="generator" content="iroffer-state 2.11, iroffer.dinoex.net">
+<meta name="generator" content="iroffer-state 2.12, iroffer.dinoex.net">
 ';
 
 # IRC-Farbe-Codes ausblenden
@@ -105,7 +105,7 @@ if ( strstr( $bowser, 'de' ) ) {
 $javascript_code = '';
 if ( $javascript > 0 ) {
 	$javascript_code = '
-<script language=javascript type=text/javascript>
+<script language="javascript" type="text/javascript">
 <!--
 function selectThis(src) {
     document.selection.clear;
@@ -923,8 +923,8 @@ href="'.$this->make_self_order( 'size' ).'">'.$caption[ 'size' ].'</a>';
 			}
 			$tname = htmlspecialchars( $tname);
 			if ( $javascript > 0 ) {
-				$tname = '<span class="selectable" onclick=javascript:selectThis(\''.
-					$jsid.'\');>'.
+				$tname = '<span class="selectable" onclick="javascript:selectThis(\''.
+					$jsid.'\');">'.
 					$tname."</span>\n".
 					'<span id="'.$jsid.'" class="hidden">'.
 					'/msg '.$this->nick.' xdcc send '.$tpack."</span>\n";
