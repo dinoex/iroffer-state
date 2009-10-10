@@ -8,7 +8,7 @@
 #
 
 $meta_generator = '
-<meta name="generator" content="iroffer-state 2.13, iroffer.dinoex.net">
+<meta name="generator" content="iroffer-state 2.14, iroffer.dinoex.net">
 ';
 
 # IRC-Farbe-Codes ausblenden
@@ -525,7 +525,7 @@ function read_status( $statefile ) {
 			continue;
 		}
 
-		if ( ereg( '^ *[*]*  [0-9]* packs ', $data ) ) {
+		if ( ereg( '^ *[*]*  [0-9]* [Pp]acks ', $data ) ) {
 			$words = explode(' ', $data);
 
 			if ( !isset( $this->total[ 'freeslots' ] ) )
