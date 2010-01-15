@@ -1143,6 +1143,7 @@ href="'.$this->make_self_order( '' ).'">'.$caption[ 'group' ].'</a>';
 </tbody>
 </table>
 <br>
+<!-- iroffer-state 2.15 -->
 <a class="credits" href="http://iroffer.dinoex.net/">'.$caption[ 'source' ].'</a>
 ';
 
