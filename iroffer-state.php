@@ -8,7 +8,7 @@
 #
 
 $meta_generator = '
-<meta name="generator" content="iroffer-state 2.14, iroffer.dinoex.net">
+<meta name="generator" content="iroffer-state 2.15, iroffer.dinoex.net">
 ';
 
 # IRC-Farbe-Codes ausblenden
@@ -762,10 +762,13 @@ function read_state( )
 						$tmp6 = get_xlong( substr( $chunkdata, $j + 8, 8 ) );
 						if ( $tmp6 > 0 )
 						$fsize = $tmp6;
-						$tmd5a = get_long( substr( $chunkdata, $j + 36, 4 ) );
-						$tmd5b = get_long( substr( $chunkdata, $j + 40, 4 ) );
-						$tmd5c = get_long( substr( $chunkdata, $j + 44, 4 ) );
-						$tmd5d = get_long( substr( $chunkdata, $j + 48, 4 ) );
+						$startmds5 = $j + 36;
+						if ( $jlen == 56 )
+							$startmds5 += 4;
+						$tmd5a = get_long( substr( $chunkdata, $startmds5, 4 ) );
+						$tmd5b = get_long( substr( $chunkdata, $startmds5 + 4, 4 ) );
+						$tmd5c = get_long( substr( $chunkdata, $startmds5 + 8, 4 ) );
+						$tmd5d = get_long( substr( $chunkdata, $startmds5 + 12, 4 ) );
 						$tmd5 = sprintf( '%08lx%08lx%08lx%08lx',
 							$tmd5a, $tmd5b, $tmd5c, $tmd5d );
 						$this->info[ $fpacks ][ 'xx_md5' ] = $tmd5;
@@ -946,9 +949,9 @@ href="'.$this->make_self_order( 'size' ).'">'.$caption[ 'size' ].'</a>';
 
 			$label = "Download mit:\n/msg ".$this->nick.' xdcc send '.$tpack."\n";
 			if ( isset( $this->info[ $key ][ 'xx_md5' ] ) )
-				$label .= "\nmd5: ".$this->info[ $key ][ 'xx_md5' ];
+				$label .= " \nmd5: ".$this->info[ $key ][ 'xx_md5' ];
 			if ( isset( $this->info[ $key ][ 'xx_crc' ] ) )
-				$label .= "\ncrc32: ".$this->info[ $key ][ 'xx_crc' ];
+				$label .= " \ncrc32: ".$this->info[ $key ][ 'xx_crc' ];
 
 			echo '
 <tr>
