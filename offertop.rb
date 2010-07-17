@@ -70,12 +70,21 @@ end
 
 # ** 2006-02-10-06:17:25: XDCC SEND #29 requested: ihs (euirc-13824fe7.bpool.celox.de)
 # ** 2006-02-10-17:48:48: XDCC SEND 15 Queued (slot): Spaghetti (euirc-6ab9fef9.adsl.alicedsl.de)
-$request_pack = / XDCC SEND #*([0-9]*) (requested|Queued .slot.): [^ ]* /
-$request_nick = / XDCC SEND #*[0-9]* (requested|Queued .slot.): ([^ )]*)/
+# $request_pack = / XDCC SEND #*([0-9]*) (requested|Queued .slot.): [^ ]* /
+# $request_nick = / XDCC SEND #*[0-9]* (requested|Queued .slot.): ([^ )]*)/
+
+# ** 2010-07-16-22:34:21: XDCC SEND 1039: requested (katharsis KATHARSIS!~KATHARSIS@EUIRC-B122E697.DIP0.T-IPCONNECT.DE on euirc)
+# ** 2010-07-16-22:34:23: XDCC SEND 1044: Queued (slot) (katharsis KATHARSIS!~KATHARSIS@EUIRC-B122E697.DIP0.T-IPCONNECT.DE on euirc)
+# ** 2010-07-16-22:34:30: XDCC SEND 1057: Queued (idle slot) (katharsis KATHARSIS!~KATHARSIS@EUIRC-B122E697.DIP0.T-IPCONNECT.DE on euirc)
+$request_pack = / XDCC SEND #*([0-9]*)[:] (requested|Queued .*slot.) [(][^ ]* /
+$request_nick = / XDCC SEND #*[0-9]*[:] (requested|Queued .*slot.) [(]([^ )]*)/
+
 # ** 2006-02-10-06:17:26: XDCC [515:ihs]: Connection established (84.245.180.163:1027 -> 213.239.196.229:53686)
 $connected_nick = / XDCC [\[][0-9]*[:]([^\]]*)[\]]: Connection established /
 # ** 2006-02-10-06:39:30: XDCC [515:ihs]: Transfer Completed (383302 KB, 22 min 3.865 sec, 289.5 KB/sec)
+
 $completed_nick = / XDCC [\[][0-9]*[:]([^\]]*)[\]]: Transfer Completed /
+
 #completed_speed = / XDCC [\[][0-9]*[:][^\]]*[\]]: Transfer Completed .[0-9]* KB, [^,]*, ([0-9]*[.][0-9]) /
 # ** 2006-02-10-06:18:02: Stat: 1/20 Sls, 0/20 Q, 2464.8K/s Rcd, 0 SrQ (Bdw: 8100K, 67.5K/s, 2473.1K/s Rcd)
 
@@ -135,6 +144,7 @@ def parse_buffer(buffer, bsize)
 		end
 		case tag
 		when 3072 # XDCCS
+			packnr += 1
 			chunkdata = buffer[ipos, len]
 			jpos = 8
 			while jpos < len
@@ -150,10 +160,13 @@ def parse_buffer(buffer, bsize)
 				case jtag
 				when 0
 					jpos = len
+				when 3073 # FILE
+					text = chunkdata[jpos + 7, jlen - 8]
+					xf = get_text( text )
+					$packs[ packnr ] = xf.gsub( /^.*\//, '' )
 				when 3074 # DESC
 					text = chunkdata[jpos + 7, jlen - 8]
 					desc = get_text( text )
-					packnr += 1
 					$packs[ packnr ] = desc
 				end
 				jpos += jlen
