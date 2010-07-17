@@ -14,8 +14,8 @@ ob_start('ob_gzhandler');
 # IRC-Nick des Bots
 #
 # 1) Name des Verzeichnissses ist der Nick
-$nick = ereg_replace( '/[^/]*[.]php$', '', $_SERVER[ 'PHP_SELF' ] );
-$nick = ereg_replace( '^/(.*/)*', '', $nick );
+$nick = dirname( $_SERVER[ 'PHP_SELF' ] );
+$nick = basename( $nick );
 $nick = 'XDCC|'.$nick;
 # 2) Nick wird fest eingetragen:
 #$nick = 'XDCC|irofferbot';
@@ -65,6 +65,7 @@ $statistik = array (
 #	'dailytext' => "Traffic heute",
 #	'weeklytext' => "Traffic diese Woche",
 #	'monthlytext' => "Traffic diesem Monat",
+#	'downltext' => "Traffic insgesammt",
 );
 
 # Ende der Einstellungen
