@@ -4,14 +4,17 @@
 #	dirk.meyer@dinoex.sub.org
 #
 # Updates on:
+# Mises à jour sur: 
 #	http://iroffer.dinoex.net/
 #
 
 $meta_generator = '
-<meta name="generator" content="iroffer-state 2.16, iroffer.dinoex.net">
+<meta name="generator" content="iroffer-state 2.17, iroffer.dinoex.net">
 ';
 
+# strip IRC Colors from text
 # IRC-Farbe-Codes ausblenden
+# IRC - Masquer les codes de couleur
 $strip_in_names = array (
 	'/^ *- */',
 	"/\002/",
@@ -35,6 +38,7 @@ if ( strstr( $bowser, 'de' ) ) {
 		'listg' => 'Gruppen-Liste',
 		'source' => 'Quellecode',
 		'download' => 'Download im IRC mit',
+		'number' => 'nummer',
 		'paste' => 'wurde in die Zwischenablage kopiert',
 		'pack' => 'PACKs',
 		'gets' => 'DLs',
@@ -59,7 +63,61 @@ if ( strstr( $bowser, 'de' ) ) {
 		'complete' => 'vollständig heruntergeladen',
 		'uncomplete' => 'unvollständig',
 		'titlegroup' => 'Liste dieser Packs anzeigen',
-        );
+		'sec' => 'Sek.',
+		'min' => 'Min.',
+		'hrs' => 'Std.',
+		'days' => 'Tage',
+	);
+	$bottraffic = array (
+		'downl' => "Traffic insgesamt",
+		'daily' => "Traffic heute",
+		'weekly' => "Traffic diese Woche",
+		'monthly' => "Traffic diesem Monat",
+	);
+} elseif ( strstr( $bowser, 'fr' ) ) {
+	setlocale(LC_TIME, 'fr_FR');
+	$caption = array(
+		'id' => 'fr',
+		'listf' => 'Liste par Fichiers',
+		'listg' => 'Liste par Serie',
+		'source' => 'Code Source',
+		'download' => 'Telecharger sur IRC en tapant',
+		'number' => 'numéro',
+		'paste' => 'copié dans votre presse-papier',
+		'pack' => 'PACKS',
+		'gets' => 'DL',
+		'rget' => 'DL/Pack',
+		'size' => 'Taille',
+		'tvol' => 'Trafic',
+		'group' => 'Series',
+		'desc' => 'Description',
+		'sortpack' => 'Trie par Num-pack.',
+		'sortgets' => 'Trie par téléchargements',
+		'sortrget' => 'Trie par nombre de téléchargements par fichier',
+		'sortsize' => 'Trie par taille de fichier',
+		'sorttvol' => 'Trie par trafic',
+		'sortgroup' => 'Trie par groupe',
+		'back' => 'Retour',
+		'titlemore' => 'Voir trafic',
+		'more' => 'Plus',
+		'titleless' => 'Cacher trafic',
+		'less' => 'Moins',
+		'titleall' => 'Voir tous les packs en une liste',
+		'all' => 'Tous les packs',
+		'complete' => 'Telechargés complet',
+		'uncomplete' => 'incomplet',
+		'titlegroup' => 'Voir la liste des packs',
+		'sec' => 'Sec.',
+		'min' => 'Min.',
+		'hrs' => 'Heures.',
+		'days' => 'Jours',
+	);
+	$bottraffic = array (
+		'downl' => "Traffic Total",
+		'daily' => "Traffic Jour",
+		'weekly' => "Traffic Semaine",
+		'monthly' => "Traffic mois",
+	);
 } else {
 	setlocale(LC_TIME, 'en_EN');
 	$caption = array(
@@ -68,6 +126,7 @@ if ( strstr( $bowser, 'de' ) ) {
 		'listg' => 'Group list',
 		'source' => 'Sourcecode',
 		'download' => 'Download in IRC with',
+		'number' => 'number',
 		'paste' => 'has been copied in your clipboard',
 		'pack' => 'PACKs',
 		'gets' => 'DLs',
@@ -92,7 +151,17 @@ if ( strstr( $bowser, 'de' ) ) {
 		'complete' => 'complete downloaded',
 		'uncomplete' => 'uncomplete',
 		'titlegroup' => 'show list of packs',
-        );
+		'sec' => 'Sec.',
+		'min' => 'Min.',
+		'hrs' => 'Hrs.',
+		'days' => 'Days',
+	);
+	$bottraffic = array (
+		'downl' => "Traffic overall",
+		'daily' => "Traffic today",
+		'weekly' => "Traffic this week",
+		'monthly' => "Traffic this month",
+	);
 }
 
 $javascript_code = '';
@@ -178,7 +247,9 @@ function filesize_cache( $filename ) {
 }
 
 #
-# bytes in lesbarere Form ausgeben.
+# Show bytes in human readable form.
+# Bytes in lesbarere Form ausgeben.
+# Nombres d'octets expédiés sous forme lisible.
 #
 function makesize( $nbytes ) {
 	global $debug;
@@ -220,7 +291,7 @@ function makesize( $nbytes ) {
 function clean_names( $text2 ) {
 	global $strip_in_names;
 
-        $text2 = str_replace( "\000", '', $text2 );
+	$text2 = str_replace( "\000", '', $text2 );
 	foreach ( $strip_in_names as $skey => $sdata) {
 		$text2 = preg_replace( $sdata, '', $text2 );
 	}
@@ -256,20 +327,22 @@ function get_text( $string ) {
 }
 
 function seconds_to_text( $sec ) {
+	global $caption;
+
 	$text = '';
 	$rest = $sec % 60;
-	$text .= $rest.' Sek.';
+	$text .= $rest.' '.$caption[ 'sec' ];
 	$mehr = floor( $sec / 60 );
 
 	$rest = $mehr % 60;
-	$text = $rest.' Min. '.$text;
+	$text = $rest.' '.$caption[ 'min' ].' '.$text;
 	$mehr = floor( $mehr / 60 );
 
 	$rest = $mehr % 24;
-	$text = $rest.' Std. '.$text;
+	$text = $rest.' '.$caption[ 'std' ].' '.$text;
 	$mehr = floor( $mehr / 24 );
 
-	$text = $mehr.' Tage '.$text;
+	$text = $mehr.' '.$caption[ 'days' ].' '.$text;
 	return $text;
 }
 
@@ -640,7 +713,9 @@ function read_state( )
 
 	read_sizecache( $cache_file );
 
+	# Read information from the bots textfile
 	# Status aller Bots lesen
+	# Lecture des informations du bot
 	foreach ( $this->filenames as $key => $filename) {
 		$this->read_removed( $filename );
 		$this->read_status( $filename );
@@ -683,13 +758,13 @@ function read_state( )
 				}
 				$this->total[ 'time' ] = $text;
 				break;
-			case 514: # TOTAL_SENT
+			case 514: # TOTAL_SENT / Envoi total
 				$text = substr( $filedata, $i + 8, $len - 8 );
 				$itotal = get_xlong( $text );
 				$this->total[ 'downl' ] += $itotal;
 				$packs = 0;
 				break;
-			case 515: # TOTAL_UPTIME
+			case 515: # TOTAL_UPTIME / Temps total de connexion du Bot
 				$text = substr( $filedata, $i + 8, $len - 8 );
 				$itotal = get_long( $text );
 				$this->total[ 'uptime' ] += $itotal;
@@ -706,7 +781,7 @@ function read_state( )
 						$jlen = 4;
 					}
 					switch ($jtag) {
-					case 3073: # FILE
+					case 3073: # FILE / Fichier
 						if ( $nogroup != 0 )
 							$this->update_group( $default_group, $fpacks, $newfile, $tgets, $fsize, $fname );
 						$nogroup = 1;
@@ -735,7 +810,7 @@ function read_state( )
 							$text = max_name_len( $text, $max_filename_len );
 						$this->info[ $fpacks ][ 'xx_desc' ] = $text;
 						break;
-					case 3074: # DESC
+					case 3074: # DESCRIPTION
 						$text = get_text( substr( $chunkdata, $j + 8, $jlen - 8 ) );
 						$text = clean_names( $text );
 						if ( $max_filename_len > 0 )
@@ -751,7 +826,7 @@ function read_state( )
 							break;
 						$this->info[ $fpacks ][ 'xx_note' ] = $tnote;
 						break;
-					case 3076: # GETS
+					case 3076: # GETS / Envoi
 						$text = substr( $chunkdata, $j + 8, $jlen - 8 );
 						$tgets = get_long( $text );
 						break;
@@ -770,20 +845,20 @@ function read_state( )
 							$tmd5a, $tmd5b, $tmd5c, $tmd5d );
 						$this->info[ $fpacks ][ 'xx_md5' ] = $tmd5;
 						break;
-					case 3080: # GROUP NAME
+					case 3080: # GROUP NAME / Nom du Groupe
 						$nogroup = 0;
 						$this->support_groups = 1;
 						$text = get_text( substr( $chunkdata, $j + 8, $jlen - 8 ) );
 						$gr = $text;
 						$this->update_group( $gr, $fpacks, $newfile, $tgets, $fsize, $fname );
 						break;
-					case 3081: # GROUP DESC
+					case 3081: # GROUP DESCRIPTION / Description du Groupe
 						if ( isset( $this->gruppen[ $gr ][ 'xx_trno' ] ) )
 							break;
 						$text = substr( $chunkdata, $j + 8, $jlen - 8 );
 						$this->gruppen[ $gr ][ 'xx_trno' ] = clean_names( $text );
 						break;
-					case 3082: # LOCK
+					case 3082: # LOCK / Pack Bloqués
 						$this->info[ $fpacks ][ 'xx_lock' ] = 1;
 						break;
 					case 3086: # CRC32
@@ -831,6 +906,7 @@ function write_table( )
 {
 	global $javascript;
 	global $caption;
+	global $bottraffic;
 
 	$ausgabe = array();
 	$nick2 = preg_replace( '/[^A-Za-z_0-9]/', '', $this->nick );
@@ -838,11 +914,13 @@ function write_table( )
 	if ( $this->support_groups == 0 )
 		$_GET[ 'group' ] = '*';
 
+	# Title of the table
 	# Ueberschrift:
+	# Création du contenu de la page web :
 	if ( isset( $_GET[ 'group' ] ) ) {
 		echo '<h1>'.$this->nick.' '.$caption[ 'listf' ]."</h1>\n";
 		echo "\n";
-		echo '<p>'.$caption[ 'download' ].' <span class="cmd">/msg '.$this->nick.' xdcc send nummer</span></p>';
+		echo '<p>'.$caption[ 'download' ].' <span class="cmd">/msg '.$this->nick.' xdcc send '.$caption[ 'number' ].'</span></p>';
 		echo "\n";
 	} else {
 		echo '<h1>'.$this->nick.' '.$caption[ 'listg' ]."</h1>\n";
@@ -944,7 +1022,7 @@ href="'.$this->make_self_order( 'size' ).'">'.$caption[ 'size' ].'</a>';
 			if ( isset( $this->info[ $key ][ 'xx_note' ] ) )
 				$tname .= '<br>'.$this->info[ $key ][ 'xx_note' ];
 
-			$label = "Download mit:\n/msg ".$this->nick.' xdcc send '.$tpack."\n";
+			$label = $caption[ 'download' ].":\n/msg ".$this->nick.' xdcc send '.$tpack."\n";
 			if ( isset( $this->info[ $key ][ 'xx_md5' ] ) )
 				$label .= " \nmd5: ".$this->info[ $key ][ 'xx_md5' ];
 			if ( isset( $this->info[ $key ][ 'xx_crc' ] ) )
@@ -1111,15 +1189,8 @@ href="'.$this->make_self_order( '' ).'">'.$caption[ 'group' ].'</a>';
 <tr><td>Version</td>
 ';
 
-	$traffic = array (
-		'downl' => "Traffic insgesamt",
-		'daily' => "Traffic heute",
-		'weekly' => "Traffic diese Woche",
-		'monthly' => "Traffic diesem Monat",
-	);
-
 	$label = '';
-	foreach ( $traffic as $skey => $sdata) {
+	foreach ( $bottraffic as $skey => $sdata) {
 		if ( !isset( $this->total[ $skey ] ) )
 			continue;
 		$this->total[ $skey.'text' ] = makesize( $this->total[ $skey ] );
@@ -1141,7 +1212,7 @@ href="'.$this->make_self_order( '' ).'">'.$caption[ 'group' ].'</a>';
 </tbody>
 </table>
 <br>
-<!-- iroffer-state 2.16 -->
+<!-- iroffer-state 2.17 -->
 <a class="credits" href="http://iroffer.dinoex.net/">'.$caption[ 'source' ].'</a>
 ';
 
