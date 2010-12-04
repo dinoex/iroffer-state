@@ -9,47 +9,47 @@
 ob_start('ob_gzhandler');
 
 #
-# Konfigurtaion:
+# Configuration:
 #
-# IRC-Nick des Bots
+# IRC-Nick of the bot
 #
-# 1) Name des Verzeichnissses ist der Nick
+# 1) Get nickname from the directory we are in
 $nick = dirname( $_SERVER[ 'PHP_SELF' ] );
 $nick = basename( $nick );
 $nick = 'XDCC|'.$nick;
-# 2) Nick wird fest eingetragen:
+# 2) Set nickname by hand
 #$nick = 'XDCC|irofferbot';
 
-# Statusfiles des bots hier angeben
+# Put Statefiles of the bot here.
 $filenames = array(
 	'mybot.state'
 );
 
-# COPY+PASTE per Javascript aktiv=1, inaktiv=0
+# COPY+PASTE with Javascript enabled=1, disabled=0
 $javascript = 1;
 
-# Begrenze die Länge der Dateinamen auf n Zeichen, 0=alle ausgeben
+# limit the length of a filename to n chars, 0=no limit
 $max_filename_len = 0;
 
-# Pfad zu einer Cache datei, Bitte leere Datei anlegen.
+# Path to a cachefile, please create an empty file.
 $cache_file = 'size.data';
 
-# Unter welchen Namen solle Packs ohne Gruppe angezeigt werden.
+# Define a group name for all files without a group.
 $default_group = '.neu';
 
-# Setze dies auf 1, dann werden gesperrte Packs nicht gelistet.
+# If set to 1, hide all locked packs
 $hide_locked = 0;
 
-# Liste von gruppen die nicht angezeigt werden. Trennzeichen '|'
+# List of groups that are hidden on the web. Use '|' as delimiter.
 $hide_groups = '';
 
-# Pfad "files_dir" in der iroffer config.
+# Pathname to "files_dir" in the iroffer config.
 $base_path = './';
 
-# Pfad wenn der bot mit chroot rennt.
+# Pathname to the chroot directory of the bot.
 $chroot_path = '';
 
-# Welche Daten sollen angezeigt werden?
+# Select which information is shown:
 $statistik = array (
 #	'uptimetext' => 'Online',
 	'timetext' => 'letztes Update',
@@ -68,7 +68,7 @@ $statistik = array (
 #	'downltext' => "Traffic insgesammt",
 );
 
-# Ende der Einstellungen
+# End of Configuration
 
 include 'iroffer-state.php';
 
@@ -78,7 +78,7 @@ include 'iroffer-state.php';
 <head>
 <?php echo $meta_generator; ?>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<meta http-equiv="content-language" content="de-de">
+<meta http-equiv="content-language" content="en-en">
 <link rel="icon" href="/favicon.ico">
 <link rel="stylesheet" type="text/css" href="iroffer-state.css">
 <title><?php echo $nick; ?></title>
