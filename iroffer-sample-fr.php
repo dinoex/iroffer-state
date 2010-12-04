@@ -22,7 +22,7 @@ $nick = '[XDCC]`MonBot';
 
 # Emplacement du fichier state du Bot
 $filenames = array(
-	'/MonBot.state'
+	'MonBot.state'
 );
 
 # COPIER+COLLER par Javascript actif=1, inactif=0
@@ -70,7 +70,7 @@ $statistik = array (
 
 # fin des paramètres, Ne pas modifier au délà
 
-include 'iroffer-state_fr.php';
+include 'iroffer-state.php';
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -79,8 +79,8 @@ include 'iroffer-state_fr.php';
 <?php echo $meta_generator; ?>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <meta http-equiv="content-language" content="fr-fr">
-<link rel="icon" href="favicon.ico">
-<link rel="stylesheet" type="text/css" href="iroffer-state-fr.css">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" type="text/css" href="iroffer-state.css">
 <title><?php echo $nick; ?></title>
 <?php echo $javascript_code; ?>
 </head>
@@ -106,3 +106,4 @@ $bot->write_table();
 </center>
 </body>
 </html>
+
