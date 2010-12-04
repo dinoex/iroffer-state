@@ -9,7 +9,7 @@
 ob_start('ob_gzhandler');
 
 #
-# Konfigurtaion:
+# Konfiguration:
 #
 # IRC-Nick des Bots
 #
