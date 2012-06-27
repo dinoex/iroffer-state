@@ -9,7 +9,7 @@
 #
 
 $meta_generator = '
-<meta name="generator" content="iroffer-state 2.17, iroffer.dinoex.net">
+<meta name="generator" content="iroffer-state 2.18, iroffer.dinoex.net">
 ';
 
 # strip IRC Colors from text
@@ -339,7 +339,7 @@ function seconds_to_text( $sec ) {
 	$mehr = floor( $mehr / 60 );
 
 	$rest = $mehr % 24;
-	$text = $rest.' '.$caption[ 'std' ].' '.$text;
+	$text = $rest.' '.$caption[ 'hrs' ].' '.$text;
 	$mehr = floor( $mehr / 24 );
 
 	$text = $mehr.' '.$caption[ 'days' ].' '.$text;
@@ -902,6 +902,13 @@ function read_state( )
 
 }
 
+function htmlspecialchars2( $text )
+{
+	global $iroffer_charset;
+
+	return htmlspecialchars( $text, ENT_COMPAT | ENT_HTML401, $iroffer_charset );
+}
+
 function write_table( )
 {
 	global $javascript;
@@ -1011,7 +1018,7 @@ href="'.$this->make_self_order( 'size' ).'">'.$caption[ 'size' ].'</a>';
 					continue;
 				$tname .= ' (gesperrt)';
 			}
-			$tname = htmlspecialchars( $tname);
+			$tname = $this->htmlspecialchars2( $tname );
 			if ( $javascript > 0 ) {
 				$tname = '<span class="selectable" onclick="javascript:selectThis(\''.
 					$jsid.'\');">'.
@@ -1173,8 +1180,8 @@ href="'.$this->make_self_order( '' ).'">'.$caption[ 'group' ].'</a>';
 '.$rget3.'
 <td class="right">'.makesize($asize).'</td>
 '.$tvol3.'
-<td class="content">'.htmlspecialchars($key).'</td>
-<td class="content"><a title="'.$caption[ 'titlegroup' ].'" href="'.$link.'">'.htmlspecialchars($tname).'</a></td>
+<td class="content">'.$this->htmlspecialchars2($key).'</td>
+<td class="content"><a title="'.$caption[ 'titlegroup' ].'" href="'.$link.'">'.$this->htmlspecialchars2($tname).'</a></td>
 </tr>
 ';
 		}
@@ -1212,7 +1219,7 @@ href="'.$this->make_self_order( '' ).'">'.$caption[ 'group' ].'</a>';
 </tbody>
 </table>
 <br>
-<!-- iroffer-state 2.17 -->
+<!-- iroffer-state 2.18 -->
 <a class="credits" href="http://iroffer.dinoex.net/">'.$caption[ 'source' ].'</a>
 ';
 

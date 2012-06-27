@@ -68,6 +68,10 @@ $statistik = array (
 #	'downltext' => "Trafic Total",
 );
 
+# Charset of all filenames
+$iroffer_charset = 'iso-8859-1';
+#$iroffer_charset = 'utf-8';
+
 # fin des paramètres, Ne pas modifier au délà
 
 include 'iroffer-state.php';
@@ -77,7 +81,7 @@ include 'iroffer-state.php';
 <html>
 <head>
 <?php echo $meta_generator; ?>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $iroffer_charset; ?>">
 <meta http-equiv="content-language" content="fr-fr">
 <link rel="icon" href="/favicon.ico">
 <link rel="stylesheet" type="text/css" href="iroffer-state.css">
