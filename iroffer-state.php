@@ -285,6 +285,13 @@ function makesize( $nbytes ) {
 	if ( $nbytes < 1000 ) {
 		return sprintf( '%dT', $nbytes );
 	}
+	if ( $nbytes < 10000 ) {
+		return sprintf( '%.1fP', $nbytes / 1024 );
+	}
+	$nbytes = ( $nbytes + 512 ) / 1024;
+	if ( $nbytes < 1000 ) {
+		return sprintf( '%dP', $nbytes );
+	}
 	return sprintf( '%dE', $nbytes );
 }
 
