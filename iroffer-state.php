@@ -1,6 +1,6 @@
 <?php
 #
-# Copyright 2004 Dirk Meyer, Im Grund 4, 34317 Habichstwald
+# Copyright 2004-2018 Dirk Meyer, Im Grund 4, 34317 Habichstwald
 #	dirk.meyer@dinoex.sub.org
 #
 # Updates on:
@@ -43,25 +43,25 @@ if ( strstr( $bowser, 'de' ) ) {
 		'pack' => 'PACKs',
 		'gets' => 'DLs',
 		'rget' => 'DLs/Pack',
-		'size' => 'GRÖSSE',
+		'size' => 'GR&Ouml;SSE',
 		'tvol' => 'Volumen',
 		'group' => 'GRUPPE',
 		'desc' => 'BESCHREIBUNG',
 		'sortpack' => 'sortieren nach Pack-Nr.',
 		'sortgets' => 'sortieren nach Anzahl Downloads',
 		'sortrget' => 'sortieren nach Downloads per Datei',
-		'sortsize' => 'sortieren nach nach Göße der Files',
-		'sorttvol' => 'sortieren nach Übertragusngsvolumen',
+		'sortsize' => 'sortieren nach nach G&ouml;&szlig;e der Files',
+		'sorttvol' => 'sortieren nach &Uuml;bertragusngsvolumen',
 		'sortgroup' => 'sortieren nach Gruppe',
-		'back' => 'zurück',
+		'back' => 'zur&uuml;ck',
 		'titlemore' => 'Volumen anzeigen',
 		'more' => 'mehr',
 		'titleless' => 'Volumen ausblenden',
 		'less' => 'weniger',
 		'titleall' => 'alle Packs in einer Liste anzeigen',
 		'all' => 'alle Packs',
-		'complete' => 'vollständig heruntergeladen',
-		'uncomplete' => 'unvollständig',
+		'complete' => 'vollst&auml;ndig heruntergeladen',
+		'uncomplete' => 'unvollst&auml;ndig',
 		'titlegroup' => 'Liste dieser Packs anzeigen',
 		'sec' => 'Sek.',
 		'min' => 'Min.',
