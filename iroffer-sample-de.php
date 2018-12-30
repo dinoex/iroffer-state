@@ -1,6 +1,6 @@
 <?php
 #
-# Copyright 2004 Dirk Meyer, Im Grund 4, 34317 Habichstwald
+# Copyright 2004-2018 Dirk Meyer, Im Grund 4, 34317 Habichstwald
 #	dirk.meyer@dinoex.sub.org
 #
 # Updates on:
@@ -28,7 +28,7 @@ $filenames = array(
 # COPY+PASTE per Javascript aktiv=1, inaktiv=0
 $javascript = 1;
 
-# Begrenze die Länge der Dateinamen auf n Zeichen, 0=alle ausgeben
+# Begrenze die LÃ¤nge der Dateinamen auf n Zeichen, 0=alle ausgeben
 $max_filename_len = 0;
 
 # Pfad zu einer Cache datei, Bitte leere Datei anlegen.

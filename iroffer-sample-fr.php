@@ -1,9 +1,9 @@
 <?php
 #
-# Copyright 2004 Dirk Meyer, Im Grund 4, 34317 Habichstwald
+# Copyright 2004-2018 Dirk Meyer, Im Grund 4, 34317 Habichstwald
 #	dirk.meyer@dinoex.sub.org
 #
-# Mises à jour sur :
+# Mises Ã  jour sur :
 #	http://iroffer.dinoex.net/
 #
 ob_start('ob_gzhandler');
@@ -13,11 +13,11 @@ ob_start('ob_gzhandler');
 #
 # IRC-Nick des Bots
 #
-# 1) Le nom du répertoire est le Nick du Bot 
+# 1) Le nom du rÃ©pertoire est le Nick du Bot 
 $nick = dirname( $_SERVER[ 'PHP_SELF' ] );
 $nick = basename( $nick );
 $nick = 'XDCC|'.$nick;
-# 2) Pour un Nick précis enregistré :
+# 2) Pour un Nick prÃ©cis enregistrÃ© :
 $nick = '[XDCC]`MonBot';
 
 # Emplacement du fichier state du Bot
@@ -28,31 +28,31 @@ $filenames = array(
 # COPIER+COLLER par Javascript actif=1, inactif=0
 $javascript = 1;
 
-# Limiter la longueur des noms de fichiers à "X" caractères, 0 = tout afficher
+# Limiter la longueur des noms de fichiers Ã  "X" caractÃ¨res, 0 = tout afficher
 $max_filename_len = 0;
 
-# Chemin du fichier de cache, Merci d'en créer un vide.
+# Chemin du fichier de cache, Merci d'en crÃ©er un vide.
 $cache_file = 'size.data';
 
-# Sous quel nom doivent apparaître les Packs sans groupe ? 
-$default_group = 'Nouveautés';
+# Sous quel nom doivent apparaÃ®tre les Packs sans groupe ? 
+$default_group = 'NouveautÃ©s';
 
-# Mettez la valeur à 1 pour ne pas afficher les Packs verrouillés dans la liste. 
+# Mettez la valeur Ã  1 pour ne pas afficher les Packs verrouillÃ©s dans la liste. 
 $hide_locked = 0;
 
-# Liste des groupes qui ne sont pas affichés. Séparateur '|'
+# Liste des groupes qui ne sont pas affichÃ©s. SÃ©parateur '|'
 $hide_groups = '';
 
 # Chemin "files_dir" dans le fichier de configuration iroffer. 
 $base_path = './';
 
-# Si le Bot a un chemin d'accès à un chroot court. 
+# Si le Bot a un chemin d'accÃ¨s Ã  un chroot court. 
 $chroot_path = '';
 
-# Quelles données doivent être affichées ?
+# Quelles donnÃ©es doivent Ãªtre affichÃ©es ?
 $statistik = array (
 #	'uptimetext' => 'Temps de connexion :',
-	'timetext' => 'Derniere mise à jour :',
+	'timetext' => 'Derniere mise Ã  jour :',
 	'freeslots' => 'Connexions ouvertes',
 #	'maxslots' => 'Connexions maximum : ',
 	'queue' => 'Queues :',
@@ -72,7 +72,7 @@ $statistik = array (
 $iroffer_charset = 'iso-8859-1';
 #$iroffer_charset = 'utf-8';
 
-# fin des paramètres, Ne pas modifier au délà
+# fin des paramÃ¨tres, Ne pas modifier au dÃ©lÃ 
 
 include 'iroffer-state.php';
 

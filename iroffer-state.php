@@ -4,7 +4,7 @@
 #	dirk.meyer@dinoex.sub.org
 #
 # Updates on:
-# Mises à jour sur: 
+# Mises Ã  jour sur: 
 #	http://iroffer.dinoex.net/
 #
 
@@ -82,8 +82,8 @@ if ( strstr( $bowser, 'de' ) ) {
 		'listg' => 'Liste par Serie',
 		'source' => 'Code Source',
 		'download' => 'Telecharger sur IRC en tapant',
-		'number' => 'numéro',
-		'paste' => 'copié dans votre presse-papier',
+		'number' => 'numÃ©ro',
+		'paste' => 'copiÃ© dans votre presse-papier',
 		'pack' => 'PACKS',
 		'gets' => 'DL',
 		'rget' => 'DL/Pack',
@@ -92,8 +92,8 @@ if ( strstr( $bowser, 'de' ) ) {
 		'group' => 'Series',
 		'desc' => 'Description',
 		'sortpack' => 'Trie par Num-pack.',
-		'sortgets' => 'Trie par téléchargements',
-		'sortrget' => 'Trie par nombre de téléchargements par fichier',
+		'sortgets' => 'Trie par tÃ©lÃ©chargements',
+		'sortrget' => 'Trie par nombre de tÃ©lÃ©chargements par fichier',
 		'sortsize' => 'Trie par taille de fichier',
 		'sorttvol' => 'Trie par trafic',
 		'sortgroup' => 'Trie par groupe',
@@ -104,7 +104,7 @@ if ( strstr( $bowser, 'de' ) ) {
 		'less' => 'Moins',
 		'titleall' => 'Voir tous les packs en une liste',
 		'all' => 'Tous les packs',
-		'complete' => 'Telechargés complet',
+		'complete' => 'TelechargÃ©s complet',
 		'uncomplete' => 'incomplet',
 		'titlegroup' => 'Voir la liste des packs',
 		'sec' => 'Sec.',
@@ -249,7 +249,7 @@ function filesize_cache( $filename ) {
 #
 # Show bytes in human readable form.
 # Bytes in lesbarere Form ausgeben.
-# Nombres d'octets expédiés sous forme lisible.
+# Nombres d'octets expÃ©diÃ©s sous forme lisible.
 #
 function makesize( $nbytes ) {
 	global $debug;
@@ -865,7 +865,7 @@ function read_state( )
 						$text = substr( $chunkdata, $j + 8, $jlen - 8 );
 						$this->gruppen[ $gr ][ 'xx_trno' ] = clean_names( $text );
 						break;
-					case 3082: # LOCK / Pack Bloqués
+					case 3082: # LOCK / Pack BloquÃ©s
 						$this->info[ $fpacks ][ 'xx_lock' ] = 1;
 						break;
 					case 3086: # CRC32
@@ -930,7 +930,7 @@ function write_table( )
 
 	# Title of the table
 	# Ueberschrift:
-	# Création du contenu de la page web :
+	# CrÃ©ation du contenu de la page web :
 	if ( isset( $_GET[ 'group' ] ) ) {
 		echo '<h1>'.$this->nick.' '.$caption[ 'listf' ]."</h1>\n";
 		echo "\n";

@@ -1,6 +1,6 @@
 <?php
 #
-# Copyright 2004 Dirk Meyer, Im Grund 4, 34317 Habichstwald
+# Copyright 2004-2018 Dirk Meyer, Im Grund 4, 34317 Habichstwald
 #	dirk.meyer@dinoex.sub.org
 #
 # Updates on:
