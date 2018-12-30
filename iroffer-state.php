@@ -9,7 +9,7 @@
 #
 
 $meta_generator = '
-<meta name="generator" content="iroffer-state 2.18, iroffer.dinoex.net">
+<meta name="generator" content="iroffer-state 2.19, iroffer.dinoex.net">
 ';
 
 # strip IRC Colors from text
@@ -292,6 +292,7 @@ function makesize( $nbytes ) {
 	if ( $nbytes < 1000 ) {
 		return sprintf( '%dP', $nbytes );
 	}
+	$nbytes = ( $nbytes + 512 ) / 1024;
 	return sprintf( '%dE', $nbytes );
 }
 
@@ -1161,7 +1162,7 @@ href="'.$this->make_self_order( '' ).'">'.$caption[ 'group' ].'</a>';
 			if ( $key == '*' )
 				continue;
 			if ( $this->hide_groups != '' ) {
-				if ( ereg( $this->hide_groups, $key ) )
+				if ( preg_match( '/' + $this->hide_groups + '/',  $key ) )
 					continue;
 			}
 
@@ -1226,7 +1227,7 @@ href="'.$this->make_self_order( '' ).'">'.$caption[ 'group' ].'</a>';
 </tbody>
 </table>
 <br>
-<!-- iroffer-state 2.18 -->
+<!-- iroffer-state 2.19 -->
 <a class="credits" href="http://iroffer.dinoex.net/">'.$caption[ 'source' ].'</a>
 ';
 
