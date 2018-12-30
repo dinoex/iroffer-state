@@ -69,8 +69,8 @@ $statistik = array (
 );
 
 # Charset of all filenames
-$iroffer_charset = 'iso-8859-1';
-#$iroffer_charset = 'utf-8';
+#$iroffer_charset = 'iso-8859-1';
+$iroffer_charset = 'utf-8';
 
 # fin des paramètres, Ne pas modifier au délà
 
