@@ -39,7 +39,7 @@ if ( strstr( $bowser, 'de' ) ) {
 		'source' => 'Quellecode',
 		'download' => 'Download im IRC mit',
 		'number' => 'nummer',
-		'paste' => 'wurde in die Zwischenablage kopiert',
+		'paste' => 'Kopiere diese Zeile in dein IRC-Program:',
 		'pack' => 'PACKs',
 		'gets' => 'DLs',
 		'rget' => 'DLs/Pack',
@@ -83,7 +83,7 @@ if ( strstr( $bowser, 'de' ) ) {
 		'source' => 'Code Source',
 		'download' => 'Telecharger sur IRC en tapant',
 		'number' => 'numéro',
-		'paste' => 'copié dans votre presse-papier',
+		'paste' => 'Copiez ceci dans votre client IRC:',
 		'pack' => 'PACKS',
 		'gets' => 'DL',
 		'rget' => 'DL/Pack',
@@ -127,7 +127,7 @@ if ( strstr( $bowser, 'de' ) ) {
 		'source' => 'Sourcecode',
 		'download' => 'Download in IRC with',
 		'number' => 'number',
-		'paste' => 'has been copied in your clipboard',
+		'paste' => 'Paste this into your IRC client:',
 		'pack' => 'PACKs',
 		'gets' => 'DLs',
 		'rget' => 'DLs/Pack',
@@ -170,15 +170,8 @@ if ( $javascript > 0 ) {
 <script language="javascript" type="text/javascript">
 <!--
 function selectThis(src) {
-    document.selection.clear;
-    txt = eval(src +".innerText");
-    theObj = document.all(txt);
-    txtRange = document.body.createTextRange();
-    txtRange.moveToElementText(eval(src));
-    txtRange.select();
-    txtRange.execCommand("RemoveFormat");
-    txtRange.execCommand("Copy");
-    alert(txt + " '.$caption[ 'paste' ].'");
+    txt = eval(src).innerHTML;
+    prompt("'.$caption[ 'paste' ].'", txt);
 }
 -->
 </script>
