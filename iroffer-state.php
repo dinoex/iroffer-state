@@ -611,7 +611,7 @@ function read_status( $statefile ) {
 					if ( !isset( $this->total[ 'freeslots' ] ) )
 						$this->total[ 'freeslots' ] = $words[ $i - 3 ];
 					if ( !isset( $this->total[ 'maxslots' ] ) )
-						$this->total[ 'freeslots' ] = $words[ $i - 1 ];
+						$this->total[ 'maxslots' ] = $words[ $i - 1 ];
 				case 'Queue:':
 					if ( !isset( $this->total[ 'queue' ] ) )
 						$this->total[ 'queue' ] = $words[ $i + 1 ];
