@@ -1207,7 +1207,7 @@ href="'.$this->make_self_order( '' ).'">'.$caption[ 'group' ].'</a>';
 	echo '<td title="'.$label.'">'.$this->total[ 'version' ]."</td></tr>\n";
 
 	$this->total[ 'uptimetext' ] = seconds_to_text( $this->total[ 'uptime' ] );
-	$this->total[ 'timetext' ] = strftime('%d.%m.%Y %H:%M', $this->total[ 'time' ] );
+	$this->total[ 'timetext' ] = date('d.m.Y H:M', $this->total[ 'time' ] );
 
 	foreach ( $this->statistik as $skey => $sdata) {
 		if ( !isset( $this->total[ $skey ] ) )
